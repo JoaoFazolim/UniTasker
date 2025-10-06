@@ -65,14 +65,23 @@ A aplicação adota o padrão de arquitetura **MVC (Model-View-Controller)** par
 A estrutura de pastas do projeto reflete essa separação:
 
 UNITASKER/
+
 ├── controllers/      # Lógica e rotas (Controller)
+
 ├── models/           # Definição dos dados (Model)
+
 ├── views/            # Templates HTML (View)
+
 ├── static/           # Arquivos CSS, JS e imagens
+
 ├── .env              # Variáveis de ambiente (credenciais)
+
 ├── app.py            # Ponto de entrada da aplicação
+
 ├── config.py         # Configurações
+
 └── requirements.txt  # Dependências do projeto
+
 ## 📊 Estrutura de Dados
 
 A modelagem dos dados foi definida em um Diagrama de Entidade-Relacionamento (DER), com as entidades centrais **Usuario**, **Serviço** e **Avaliação**.
