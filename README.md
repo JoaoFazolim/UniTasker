@@ -86,17 +86,15 @@ UNITASKER/
 
 A modelagem dos dados foi definida em um Diagrama de Entidade-Relacionamento (DER), com as entidades centrais **Usuario**, **Serviço** e **Avaliação**.
 
-*(Você pode inserir a imagem do seu DER aqui)*
-`![DER UniTasker](caminho/para/sua/imagem_der.png)`
+![Diagrama de Entidade-Relacionamento](static/Diagrama%20Estrutura%20de%20dados.png)
 
 ## 🎨 Telas e Protótipos
 
 As telas essenciais da plataforma foram prototipadas no Figma, estabelecendo a identidade visual e a experiência do usuário.
 
-*(Você pode inserir as imagens dos seus protótipos aqui)*
-`![Telas de Autenticação](caminho/para/sua/image_b93ae5.png)`
-`![Página Inicial](caminho/para/sua/image_b93aa8.png)`
-`![Telas de Perfil](caminho/para/sua/image_b93a6a.png)`
+![Protótipo das Telas de Registro e Login](static/Registro%20e%20Login%20-%20Prototipo.png)
+![Protótipo da Tela Inicial](static/Tela%20inicial%20-%20Prototipo.png)
+![Área do usuário](static/Área%20do%20usuário%20-%20Prototipo.png)
 
 ## 🏁 Começando
 
