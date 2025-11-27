@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniTasker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="images/ut.png" />
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-top"></div>
+
+        <div class="header-nav">
+            <div class="logo">
+                <img src="images/logo.png" alt="UniTasker" class="logo">
+            </div>
+
+            <nav class="menu">
+                <a href="#" id="inicio">Início</a>
+
+                <div class="dropdown">
+                    <a href="#" id="categorias">Categorias</a>
+                    <div class="dropdown-content" id="dropdown-menu"></div>
+                </div>
+
+                <div class="search-container">
+                    <a href="#" id="procurar">Procurar</a>
+                    <div class="search-wrapper" id="search-wrapper">
+                        <input type="text" class="search-input" id="search-input" placeholder="Buscar cursos...">
+                        <span class="search-icon">🔍</span>
+                        <div class="search-results" id="search-results"></div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="btn-group">
+                <a href="../Pagina inicial/index.html" class="btn sair">Sair</a>
+                <a href="../Criar conta/index.html" class="btn criar">Meu Perfil</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="grid">
+                <div class="left-column">
+                    <div class="card profile">
+                        <div class="card-body">
+                            <div class="profile-img">JD</div>
+                            <h3 id="profileName">Editar Nome</h3>
+                            <input type="text" id="editName" class="edit-field" style="display:none;">
+                            <div class="profile-info">
+                                <p id="profileJob">Curso</p>
+                                <input type="text" id="editJob" class="edit-field" style="display:none;">
+                                <p id="profileLocation">Localização</p>
+                                <input type="text" id="editLocation" class="edit-field" style="display:none;">
+                                <p id="profileBirthday">Data de Nascimento</p>
+                                <input type="text" id="editBirthday" class="edit-field" style="display:none;">
+                            </div>
+                            <button id="editProfileBtn" class="btn btn-primary" style="margin-top:10px;">Editar
+                                Perfil</button>
+                            <button id="saveProfileBtn" class="btn btn-success"
+                                style="display:none; margin-top:10px;">Salvar</button>
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Skills</h3>
+                            <div class="tag-input-area">
+                                <input type="text" id="tagInput" placeholder="Adicionar skill...">
+                                <button id="addTagBtn" class="btn btn-primary">Adicionar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="skills" id="skillsList">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="center-column">
+                    <div class="servico-box-dinamico">
+                        <form id="servico-form">
+                            <h3 class="servico-title-2">Formas de serviço:</h3>
+
+                            <div class="preco-group">
+                                <span class="preco-label">Preço:</span>
+                                <div class="preco-input-container">
+                                    <input type="text" id="preco" class="preco-input" placeholder="R$ 0,00">
+                                </div>
+                            </div>
+
+                            <div class="servico-options">
+                                <label><input type="radio" name="forma" value="pago" checked> Pago</label>
+                                <label><input type="radio" name="forma" value="voluntario"> Voluntário</label>
+                                <label><input type="radio" name="forma" value="a_combinar"> A combinar</label>
+                            </div>
+
+                            <div class="detalhes-area">
+                                <h4 class="detalhes-title-2">Detalhes:</h4>
+                                <textarea id="detalhes"></textarea>
+                            </div>
+
+                            <div class="detalhes-area">
+                                <h4 class="detalhes-title-2">Disponibilidade:</h4>
+                                <textarea id="disponibilidade"
+                                    placeholder="Ex.: Segunda a sexta: 18h às 22h"></textarea>
+                            </div>
+
+                            <div class="detalhes-area">
+                                <h4 class="detalhes-title-2">Formato:</h4>
+                                <textarea id="formato" placeholder="Ex.: Online (Discord / Meet)"></textarea>
+                            </div>
+
+                            <button type="submit" class="gerenciar-btn">Gerenciar serviço</button>
+                        </form>
+                        <div id="servico-resultado" class="resultado-box hidden">
+                            <h3 class="servico-title-2">Formas de serviço:</h3>
+
+                            <p id="resultado-forma"></p>
+
+                            <div class="preco-group">
+                                <span class="preco-label">R$</span>
+                                <div class="preco-input-container">
+                                    <input type="text" id="resultado-preco" class="preco-input" readonly>
+                                </div>
+                            </div>
+
+                            <p class="detalhes-title-2">Detalhes:</p>
+                            <p id="resultado-detalhes"></p>
+
+                            <p class="detalhes-title-2">Disponibilidade:</p>
+                            <p id="resultado-disponibilidade"></p>
+
+                            <p class="detalhes-title-2">Formato:</p>
+                            <p id="resultado-formato"></p>
+
+                            <button id="editar-btn" class="gerenciar-btn">Editar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="card">
+
+                    </div>
+
+                    <div class="card solicitaçoes">
+                        <div class="card-body">
+                            <h3 class="card-header">Voce possui uma nova solicitação!</h3>
+                            <div class="friend-avatar">JD</div>
+                            <h4>Jane Doe</h4>
+                            <div class="friend-actions">
+                                <button class="btn btn-success">Aceitar</button>
+                                <button class="btn btn-danger">Recusar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-top"></div>
+
+        <div class="footer-content">
+            <div class="footer-column logo-info-column">
+                <img src="images/logo2.png" alt="UniTasker" class="logo-footer">
+                <h3>UT UniTasker</h3>
+                <p>Conectando estudantes para alcançar o sucesso acadêmico juntos.</p>
+            </div>
+
+            <div class="footer-column">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#">Sobre Nós</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Suporte</h3>
+                <ul>
+                    <li><a href="#">Ajuda</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Contato</a></li>
+                    <li><a href="#">Política de Privacidade</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 UT UniTasker. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="script-skill.js"></script>
+    <script src="script-perfil.js"></script>
+    <script src="script-servico.js"></script>
+    <script src="script-pesq-cat.js"></script>
+
+</body>
+
+</html>
