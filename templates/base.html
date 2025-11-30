@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KLS6KLB3');</script>
+    <!-- End Google Tag Manager -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4ZNMZX1GE"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-K4ZNMZX1GE');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UniTasker{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/ut.png') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% block css %}
+    {% endblock %}
+
+
+
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KLS6KLB3"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+
+    <header class="header">
+        
+
+        <div class="header-top"></div>
+        <div class="header-nav">
+            <div class="logo">    
+                <a href="{{ url_for('home.home') }}">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="UniTasker" class="logo">
+                </a>
+            </div>
+
+            <nav class="menu">
+                <a href="{{ url_for('home.home') }}" id="inicio">Início</a>
+
+               
+                <a href="{{ url_for('servico.listar') }}" id="servicos">Serviços</a>
+                    
+
+                <div class="dropdown">
+                    <a href="#" id="categorias">Categorias</a>
+                    <div class="dropdown-content" id="dropdown-menu"></div>
+                </div>
+
+            </nav>
+
+            <div class="btn-group">
+              
+                {% if current_user.is_authenticated %}
+                    <span class="btn" style="border:none; cursor:default;">Olá, {{ current_user.nome }}</span>
+                    <a href="{{ url_for('usuario.perfil_publico', username=current_user.username) }}" class="btn criar">Meu Perfil</a>
+                    <a href="{{ url_for('usuario.logout') }}" class="btn criar">Sair</a>
+                {% else %}
+                    <a href="{{ url_for('usuario.login') }}" class="btn entrar">Entrar</a>
+                    <a href="{{ url_for('usuario.cadastro') }}" class="btn criar">Criar Conta</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <div class="container-alertas">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category == 'erro' else 'sucesso' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+
+    <footer class="footer">
+        <div class="footer-top"></div>
+
+        <div class="footer-content">
+            <div class="footer-column logo-info-column">
+                <img src="{{ url_for('static', filename='images/logo2.png') }}" alt="UniTasker" class="logo-footer">
+                <h3>UT UniTasker</h3>
+                <p>Conectando estudantes para alcançar o sucesso acadêmico juntos.</p>
+            </div>
+
+            <div class="footer-column">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="{{ url_for('home.home') }}">Início</a></li>
+                    <li><a href="#">Sobre Nós</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Suporte</h3>
+                <ul>
+                    <li><a href="#">Ajuda</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Contato</a></li>
+                    <li><a href="#">Política de Privacidade</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 UT UniTasker. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+
+    <script src="{{ url_for('static', filename='js/script-pesq-cat.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script-alerta.js') }}"></script>
+
+</body>
+</html>

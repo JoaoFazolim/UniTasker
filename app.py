@@ -1,8 +1,9 @@
-from flask import Flask
+from flask import Flask, request, jsonify, flash, redirect
 from flask_login import LoginManager, current_user
 from config import Config
 import os
-from routes import usuario_bp, home_bp
+from controllers import usuario_bp, home_bp, dashboard_bp, servico_bp
+from extensions import db, login_manager
 
 #Instanciando o app e definindo pasta de templates
 app = Flask(__name__, template_folder=os.path.join('templates'))
@@ -10,19 +11,17 @@ app = Flask(__name__, template_folder=os.path.join('templates'))
 app.config.from_object(Config)
 
 
-loginManager = LoginManager()
-loginManager.init_app(app)
+
+login_manager.init_app(app)
 
 #importando tudo no models e incluindo o db no app
 from models import *
 db.init_app(app)
 
-with app.app_context():
-    db.create_all()
 
 
 #Função para carregar o usuário da sessão
-@loginManager.user_loader
+@login_manager.user_loader
 def load_user(userId):
     return Usuario.query.get(int(userId))
 
@@ -35,9 +34,29 @@ def inject_user():
     return { 'usuarioAtual' : current_user } 
 
 
+
+#Tratamento de erros de arquivo acima do limite
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    #Verifica se a requisição foi feita pelo postman
+    if request.is_json or request.accept_mimetypes.accept_json:
+        return jsonify({
+            'status': 'ERRO', 
+            'mensagem': 'O arquivo enviado é muito grande. O limite máximo é 4MB.'
+        }), 413
+    
+    #Caso vier do navegador da um flash na mensagem
+    flash('O arquivo enviado é muito grande. O limite máximo é 4MB.', 'erro')
+    
+    #E redireciona para a página que ele estava
+    return redirect(request.url)
+
+
 #Aplicando os bps de rotas dos controllers
 app.register_blueprint(home_bp)
 app.register_blueprint(usuario_bp)
+app.register_blueprint(dashboard_bp)
+app.register_blueprint(servico_bp)
 
 
 

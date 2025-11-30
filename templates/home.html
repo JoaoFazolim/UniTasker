@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}UniTasker - Início{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="main-content">
+
+        <img src="{{ url_for('static', filename='images/fundo.png') }}" alt="Fundo" class="bg-image">
+
+        <h1>Aprenda, ensine, colabore, escolha como participar.</h1>
+        <h2>Comunicação network</h2>
+        <h3>Moldando um futuro onde a tecnologia nos une...</h3>
+        <p>UniTasker é uma plataforma que conecta os diversos cursos da universidade, promovendo o networking entre
+            alunos e criando um ambiente de colaboração prática. Aqui, estudantes podem adquirir experiência
+            participando de projetos, ajudando colegas de outras áreas e oferecendo suas próprias habilidades como
+            serviço, facilitando o desenvolvimento profissional e o ingresso no mercado de trabalho de maneira simples,
+            acessível e colaborativa.</p>
+    </div>
+
+    <section class="features">
+        <h2 class="section-title">Como Funciona</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <a class="feature-icon icon3" title="icone">none</a>
+                <h3>Comunidade</h3>
+                <p>Conecte-se com alunos de diferentes cursos, troque experiências e aprenda colaborando.</p>
+                <p>O UniTasker é um espaço para compartilhar conhecimento e construir conexões acadêmicas reais.</p>
+            </div>
+
+            <div class="feature-card">
+                <a class="feature-icon icon2" title="icone">none</a>
+                <h3>Campos de Estudo</h3>
+                <p>Explore diferentes áreas e trabalhe em projetos interdisciplinares.</p>
+                <p>Amplie sua visão acadêmica e desenvolva novas habilidades em conjunto com outros estudantes.</p>
+            </div>
+
+            <div class="feature-card">
+                <a class="feature-icon icon1" title="icone">none</a>
+                <h3>Solicitações e Serviços</h3>
+                <p>Crie solicitações de ajuda ou ofereça suas habilidades a outros alunos.</p>
+                <p>Escolha entre colaborar de forma gratuita ou com retorno financeiro.</p>
+            </div>
+        </div>
+    </section>
+{% endblock %}

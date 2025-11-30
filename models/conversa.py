@@ -1,4 +1,4 @@
-from models import db
+from extensions import db
 
 class Conversa(db.Model):
 

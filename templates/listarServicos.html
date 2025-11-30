@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Explorar Serviços - UniTasker{% endblock %}
+
+{% block css %}
+<style>
+
+    .search-hero {
+        background-color: #0a2439;
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .grid-servicos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .card-servico {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+        display: flex;
+        flex-direction: column;
+    }
+    .card-servico:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+
+    .servico-img {
+        height: 180px;
+        background-color: #eee;
+        position: relative;
+    }
+    .servico-img img {
+        width: 100%; height: 100%; object-fit: cover;
+    }
+    .placeholder-img {
+        width: 100%; height: 100%;
+        display: flex; align-items: center; justify-content: center;
+        color: #aaa; font-size: 0.9em; background: #f4f4f4;
+    }
+
+    .servico-body {
+        padding: 15px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .servico-cat {
+        font-size: 0.75em;
+        text-transform: uppercase;
+        color: #666;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+
+    .servico-titulo {
+        margin: 0 0 10px 0;
+        font-size: 1.2em;
+        color: #0a2439;
+    }
+
+    .servico-user {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: auto; 
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+    .user-avatar {
+        width: 30px; height: 30px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8em;
+        color: #555;
+    }
+
+    .servico-preco {
+        margin-left: auto;
+        font-weight: bold;
+        color: #c3c100;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+<div class="search-hero">
+    <h2>Buscar por nome</h2>
+    <div style="max-width: 500px; margin: 20px auto; position: relative;">
+        <form action="{{ url_for('servico.listar') }}" method="GET" style="display: flex;">
+            <input type="text" name="busca" placeholder="O que você procura?" class="search-input" style="border-radius: 4px 0 0 4px; border: none;">
+            <button type="submit" class="btn" style="background: #c3c100; color: #0a2439; border-radius: 0 4px 4px 0; font-weight: bold;">Buscar</button>
+        </form>
+    </div>
+</div>
+
+<main class="container">
+    <div class="grid-servicos">
+        {% for servico in dados %}
+        <a href="{{ url_for('servico.detalhes', id_servico=servico.id) }}" style="text-decoration: none; color: inherit;">
+            <div class="card-servico">
+
+                <div class="servico-img">
+                    {% if servico.imagem_capa %}
+                        <img src="{{ url_for('static', filename='images/uploads/' + servico.imagem_capa.caminho) }}" alt="Capa">
+                    {% else %}
+                        <div class="placeholder-img">Sem imagem</div>
+                    {% endif %}
+                </div>
+
+
+                <div class="servico-body">
+                    <span class="servico-cat">{{ servico.categoria }}</span>
+                    <h3 class="servico-titulo">{{ servico.titulo }}</h3>
+                    
+      
+                    <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px;">
+                        {% for tag in servico.tags[:3] %}
+                            <span style="font-size: 0.7em; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; color: #555;">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+
+              
+                    <div class="servico-user">
+                        {% if servico.usuario.imagem %}
+                            <img src="{{ url_for('static', filename='images/' + servico.usuario.imagem) }}" class="user-avatar">
+                        {% else %}
+                            <div class="user-avatar">{{ servico.usuario.nome[:1] }}</div>
+                        {% endif %}
+                        
+                        <span style="font-size: 0.9em;">{{ servico.usuario.nome.split()[0] }}</span>
+                        
+                        <div class="servico-preco">
+                            {% if servico.forma_pagamento == 'pago' %}
+                                R$ {{ "%.2f"|format(servico.valor_minimo) }}
+                            {% else %}
+                                {{ servico.forma_pagamento | replace('_', ' ') | title }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% else %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                <h3>Nenhum serviço encontrado.</h3>
+                <p>Tente buscar por outro termo ou categoria.</p>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+
+{% endblock %}

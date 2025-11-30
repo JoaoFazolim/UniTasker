@@ -1,0 +1,42 @@
+<div class="card">
+    <div class="card-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            <h3 style="margin: 0; color: #0a2439;">Editar Perfil</h3>
+            <a href="{{ url_for('usuario.perfil_publico', username=current_user.username) }}" class="btn" style="background: #eee; color: #333; font-size: 0.9em; padding: 5px 10px;">Cancelar</a>
+        </div>
+
+        <form action="{{ url_for('usuario.editar_perfil') }}" method="POST" enctype="multipart/form-data">
+            
+            <div class="form-group" style="margin-bottom: 20px; text-align: center;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Foto de Perfil</label>
+                <input type="file" name="foto_perfil" accept="image/*" class="form-control" style="width: auto; display: inline-block;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Nome</label>
+                <input type="text" name="nome" value="{{ dados.nome }}" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;" required>
+            </div>
+
+            <!-- Cargo/Função -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Cargo / Curso</label>
+                <input type="text" name="cargo" value="{{ dados.cargo }}" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <!-- Localização -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Localização</label>
+                <input type="text" name="localizacao" value="{{ dados.localizacao or '' }}" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <!-- Bio Markdown -->
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Sobre Mim (Bio)</label>
+                <textarea name="descricaoMD" rows="8" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit;">{{ dados.descricaoMD }}</textarea>
+                <p style="font-size: 0.8em; color: #666; margin-top: 5px;">Dica: Você pode usar Markdown (*itálico*, **negrito**).</p>
+            </div>
+
+            <button type="submit" class="btn btn-success" style="width: 100%; padding: 12px; font-size: 1.1em;">Salvar Alterações</button>
+        </form>
+    </div>
+</div>

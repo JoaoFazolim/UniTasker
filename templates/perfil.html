@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if modo == 'editar_perfil' %}Editando Perfil
+    {% elif modo == 'criar_servico' %}Novo Serviço
+    {% elif modo == 'editar_servico' %}Editando Serviço
+    {% elif current_user.is_authenticated and current_user.id == dados.id %} Meu Perfil
+    {% else %}Perfil de {{ dados.nome }}
+    {% endif %}
+    - UniTasker
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/perfil.css') }}">
+{% endblock %}
+
+{% block content %}
+    <main>
+        {% if dados %}
+        <div class="container">
+            <div class="grid">
+                
+                <div class="left-column">
+                    {% include "cardProfile.html" %}
+                </div>
+
+                </div>
+
+                <div class="center-column">
+                    {% if modo == 'editar_perfil' %}
+    
+                        {% include "editarPerfil.html" %}
+                    
+                    {% elif modo == 'criar_servico' %}
+                       
+                        {% include "formServico.html" %}
+                    
+                    {% elif modo == 'editar_servico' %}
+                       
+                        {% include "formServico.html" %}
+                    
+                    {% else %}
+                      
+                        {% include "centroPerfil.html" %}
+
+                    {% endif %}
+                </div>
+
+        
+                <div class="right-column">
+                    <div class="card">
+                      
+                    </div>
+
+                    <div class="card solicitaçoes">
+                        <div class="card-body">
+                            <h3 class="card-header">Você possui uma nova solicitação!</h3>
+                            <div class="friend-avatar">JD</div>
+                            <h4>Jane Doe</h4>
+                            <div class="friend-actions">
+                                <button class="btn btn-success">Aceitar</button>
+                                <button class="btn btn-danger">Recusar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                  
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        
+
+        {% else %}
+            <div class="container" style="text-align: center; padding: 50px;">
+                <h2>Perfil indisponível 💀</h2>
+                <p>Retorne para a <a href="{{ url_for('home.home') }}">Página Inicial</a></p>
+            </div>
+        {% endif %}
+    </main>
+    {% if dados %}
+        <script src="{{ url_for('static', filename='js/script-skill.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/script-perfil.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/script-servico.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,176 @@
+<div class="servico-box-dinamico">
+    
+
+    <form id="servico-form" 
+          action="{{ url_for('servico.editar', id_servico=servico_editar.id) if modo == 'editar_servico' else url_for('servico.criar') }}" 
+          method="POST"
+          enctype="multipart/form-data" 
+          onsubmit="return validarCamposServico()">
+
+        <h3 class="servico-title-2" style="border-bottom: 2px solid #0a2439; padding-bottom: 5px;">
+            {% if modo == 'editar_servico' %}Editar Serviço{% else %}Novo Serviço{% endif %}
+        </h3>
+
+
+        <div class="detalhes-area">
+            <h4 class="detalhes-title-2">Título do Serviço:</h4>
+            <input type="text" name="titulo" class="preco-input" style="width: 100%; text-align: left;" 
+                   value="{{ servico_editar.titulo if servico_editar else '' }}" placeholder="Ex: Aulas de Python Avançado" required>
+        </div>
+        
+
+        <div class="servico-options" id="forma-pagamento-opcoes">
+            {% set forma_atual = servico_editar.forma_pagamento if servico_editar else 'pago' %}
+            
+            <label><input type="radio" name="forma_pagamento" value="pago" {% if forma_atual == 'pago' %}checked{% endif %} onclick="togglePreco(true)"> Pago</label>
+            <label><input type="radio" name="forma_pagamento" value="voluntario" {% if forma_atual == 'voluntario' %}checked{% endif %} onclick="togglePreco(false)"> Voluntário</label>
+            <label><input type="radio" name="forma_pagamento" value="a_combinar" {% if forma_atual == 'a_combinar' %}checked{% endif %} onclick="togglePreco(false)"> A combinar</label>
+        </div>
+
+        <div id="preco-range-container" class="detalhes-area" style="display: {{ 'flex' if forma_atual == 'pago' else 'none' }}; gap: 10px;">
+            
+
+            <div class="preco-group" style="flex: 1;">
+                <span class="preco-label">Valor Mínimo (R$):</span>
+                <div class="preco-input-container">
+                    <input type="number" step="0.01" name="valor_minimo" id="valor_minimo" class="preco-input" 
+                           value="{{ servico_editar.valor_minimo if servico_editar else '' }}" placeholder="0.00">
+                </div>
+            </div>
+            
+
+            <div class="preco-group" style="flex: 1;">
+                <span class="preco-label">Valor Máximo (R$):</span>
+                <div class="preco-input-container">
+                    <input type="number" step="0.01" name="valor_maximo" id="valor_maximo" class="preco-input" 
+                           value="{{ servico_editar.valor_maximo if servico_editar else '' }}" placeholder="Opcional">
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="detalhes-area">
+            <h4 class="detalhes-title-2">Categoria:</h4>
+            <select name="categoria_id" class="preco-input" style="width: 100%; text-align: left; height: 40px;" required>
+                <option value="">Selecione uma categoria...</option>
+                
+                {% set categoria_atual = servico_editar.categoria_id if servico_editar and servico_editar.categoria_id else 0 %}
+                
+                <option value="1" {% if categoria_atual == 1 %}selected{% endif %}>Aulas e Monitoria</option>
+                <option value="2" {% if categoria_atual == 2 %}selected{% endif %}>Tecnologia e Programação</option>
+                <option value="3" {% if categoria_atual == 3 %}selected{% endif %}>Design e Multimídia</option>
+                <option value="4" {% if categoria_atual == 4 %}selected{% endif %}>Trabalhos Acadêmicos e ABNT</option>
+                <option value="5" {% if categoria_atual == 5 %}selected{% endif %}>Assistência Técnica</option>
+                <option value="6" {% if categoria_atual == 6 %}selected{% endif %}>Tradução e Redação</option>
+                <option value="7" {% if categoria_atual == 7 %}selected{% endif %}>Marketing e Negócios</option>
+                <option value="8" {% if categoria_atual == 8 %}selected{% endif %}>Saúde e Estética</option>
+                <option value="9" {% if categoria_atual == 9 %}selected{% endif %}>Outros</option>
+            </select>
+        </div>
+
+
+        <div class="detalhes-area">
+            <h4 class="detalhes-title-2">Detalhes:</h4>
+            <textarea id="detalhes" name="descricaoMD" required>{{ servico_editar.descricaoMD if servico_editar else '' }}</textarea>
+        </div>
+
+
+        <div class="detalhes-area">
+            <h4 class="detalhes-title-2">Tags (separadas por vírgula):</h4>
+            <textarea id="tags" name="tags" placeholder="Ex: Python, Figma, Cálculo">{{ servico_editar.tags|join(', ') if servico_editar else '' }}</textarea>
+        </div>
+        
+
+
+        <div class="detalhes-area">
+            <h4 class="detalhes-title-2">Fotos do Serviço (Máx 4):</h4>
+            
+            <input type="file" name="fotos" multiple accept="image/*" class="form-control" 
+                style="width: 100%; border: 1px solid #ccc; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+            
+            {% if servico_editar and servico_editar.imagens %}
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    {% for img in servico_editar.imagens %}
+                        <div class="img-wrapper" id="img-wrapper-{{ img.id }}" style="position: relative; width: 80px; height: 80px;">
+                            <img src="{{ url_for('static', filename='images/uploads/' + img.caminho) }}" 
+                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;">
+                            
+                            <button type="button" onclick="marcarParaRemover({{ img.id }})"
+                                    style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; line-height: 1;">
+                                &times;
+                            </button>
+                            
+
+                            <div style="position: absolute; bottom: -20px; left: 0; width: 100%; text-align: center;">
+                                <input type="radio" name="imagem_capa_id" value="{{ img.id }}" 
+                                    {% if img.e_capa %}checked{% endif %} title="Definir como Capa">
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <p style="font-size: 0.8em; color: #666; margin-top: 20px;">Imagens atuais: {{ servico_editar.imagens|length }} (Marque a bolinha para definir a capa)</p>
+            {% endif %}
+
+            <!-- Campo oculto para guardar os IDs das imagens a remover -->
+            <input type="hidden" name="imagens_remover" id="imagens_remover" value="">
+        </div>
+
+
+        <!-- Botão de Ação -->
+        <button type="submit" class="gerenciar-btn">
+            {% if modo == 'editar_servico' %}Salvar Alterações{% else %}Criar Serviço{% endif %}
+        </button>
+        
+    </form>
+</div>
+
+<!-- LÓGICA JAVASCRIPT PARA RANGE DE PREÇO -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Função para garantir que o estado inicial (Pago) seja respeitado ao carregar a página
+        togglePreco(document.querySelector('input[name="forma_pagamento"]:checked').value === 'pago');
+    });
+
+    // Função que esconde/mostra o range de preço
+    function togglePreco(isPago) {
+        const precoContainer = document.getElementById('preco-range-container');
+        const inputMin = document.getElementById('valor_minimo');
+        
+        if (isPago) {
+            precoContainer.style.display = 'flex';
+            inputMin.setAttribute('required', 'required'); // Torna o mínimo obrigatório
+        } else {
+            precoContainer.style.display = 'none';
+            inputMin.removeAttribute('required');
+        }
+    }
+    
+    // Função de validação final (Garante que o Máximo não seja menor que o Mínimo)
+    function validarCamposServico() {
+        const inputMin = document.getElementById('valor_minimo');
+        const inputMax = document.getElementById('valor_maximo');
+        const isPago = document.querySelector('input[name="forma_pagamento"]:checked').value === 'pago';
+        
+        if (isPago) {
+            const min = parseFloat(inputMin.value);
+            const max = parseFloat(inputMax.value);
+
+            if (min <= 0) {
+                alert("O valor mínimo deve ser maior que R$ 0,00.");
+                return false;
+            }
+
+            if (!isNaN(max) && max < min) {
+                alert("O valor máximo não pode ser menor que o valor mínimo.");
+                return false;
+            }
+        }
+        return true;
+    }
+    let idsRemover = [];
+    function marcarParaRemover(id) {
+        idsRemover.push(id);
+        document.getElementById('imagens_remover').value = idsRemover.join(',');
+        document.getElementById('img-wrapper-' + id).style.display = 'none';
+    }
+</script>

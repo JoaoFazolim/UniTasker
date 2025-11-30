@@ -1,136 +1,147 @@
-from models import *
-from flask_bcrypt import generate_password_hash, check_password_hash
-from datetime import datetime
+from flask import Blueprint, render_template, request, redirect,url_for, flash
+from utils import handleResponse
+from flask_login import login_user, logout_user, login_required, current_user
+from services import *
 
-def cadastrarUsuario(dados):
 
-    username = dados.get('username')
-    nome = dados.get('nome')
-    email = dados.get('email') 
-    senha = dados.get('senha') 
+usuario_bp = Blueprint('usuario', __name__)
 
-    
-    if not username or not email or not senha:
-        return {'status': 'FORM_INVALIDO', 'mensagem': 'Preencha todos os campos obrigatórios!'}
-
-   
-    usuario_existente = Usuario.query.filter(
-        (Usuario.username == username) | (Usuario.email == email)
-    ).first()
-
-    if usuario_existente:
-        return {'status': 'CONFLITO', 'mensagem': 'Nome de usuário ou E-mail já cadastrados.'}
-
-    try:
-        
-        hashSenha = generate_password_hash(senha).decode('utf-8')
-
-        
-        novoUsuario = Usuario(
-            username=username,
-            nome=nome,
-            email=email,
-            hashSenha=hashSenha, 
-        )
-
-        
-        db.session.add(novoUsuario)
-        db.session.commit()
-
-        
-        return {
-            'status': 'SUCESSO', 
-            'mensagem': 'Cadastro realizado com sucesso!',
-            'data': {
-                'id': novoUsuario.id,
-                'username': novoUsuario.username,
-                'email': novoUsuario.email
-            }
-        }
-
-    except Exception as e:
-        db.session.rollback() 
-        return {'status': 'ERRO_GENERICO', 'mensagem': f'Erro interno: {str(e)}'}
-    
-
-def fazerLogin(dados):
-    
-    login = dados.get('login')
-    senha = dados.get('senha')
-
-    #Validação básica dos dados do form
-    if not login or not senha:
-        return {'status': 'FORM_INVALIDO', 'mensagem': 'Preencha usuário e senha.'}
-
-    #Busca por email ou username para depois checar a senha
-    usuario = Usuario.query.filter(
-        (Usuario.username == login) | (Usuario.username == login)
-    ).first()
-
-    # Verificando se o usuário e senha batem
-    if usuario and check_password_hash(usuario.hashSenha, senha):
-        
-        #Verifica se a conta foi desativada antes de fazer login
-        if not usuario.estaAtivo:
-            return {'status': 'NAO_AUTORIZADO', 'mensagem': 'Esta conta foi desativada.'}
-
-        #Retorna o objeto para a biblioteca flask-login salvar a sessão
-        return {'status': 'SUCESSO', 'data': usuario} 
-    
+@usuario_bp.route('/cadastro', methods = ['GET', 'POST'])
+def cadastro():
+    if request.method == 'POST':
+        try:
+            dadosUsuario = {
+                                'username': request.form.get('username'),
+                                'nome': request.form.get('nome'),
+                                'email': request.form.get('email'),
+                                'senha': request.form.get('senha'),
+                            }
+            resposta = cadastrarUsuario(dadosUsuario)
+         
+            return handleResponse(resposta, 'login')
+        except Exception as e:
+            return handleResponse({'status': 'ERRO_GENERICO', 'mensagem': str(e)}, 'cadastro')
     else:
-        #Usuário ou senha incorretos
-        return {'status': 'NAO_AUTORIZADO', 'mensagem': 'Usuário ou senha inválidos.'}
+        return render_template('cadastro.html', mensagem="Cadastra ai 🔫💀🤬")
+
+
+@usuario_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    #Verifica se ja esta logado e retorna pra home
+    if current_user.is_authenticated:
+        return redirect(url_for('home.home')) 
+
+    if request.method == 'POST':
+        #Extrai os dados do form
+        dados = request.form
+
+        dadosLogin = {
+            'login': dados.get('login'),
+            'senha': dados.get('senha')
+        }
+        
+        #Chama o controlador de login
+        resposta = fazerLogin(dadosLogin)
+
+        if resposta['status'] == 'SUCESSO':
+            usuario = resposta['data']
+            
+            #Cria a sessão passando o objeto do usuário como argumento
+            login_user(usuario)
+
+            resposta['data'] = usuario.to_dict() 
+            
+            querJson = request.accept_mimetypes.best_match(['application/json', 'text/html']) == 'application/json'
+            
+            if querJson:
+                #Retorna a resposta corretamente caso seja feita a requisição pelo postman
+                return handleResponse(resposta, 'login')
+            else:
+                #Se for no navegador mesmo faz um redirect
+                return redirect(url_for('home.home'))
+            
+        
+        else:
+            #Se der algum erro retorna para o login
+            return handleResponse(resposta, 'login')
+
+    #Formulário caso seja um get
+    return render_template('login.html')
+
+@usuario_bp.route('/usuario/<username>', methods=['GET'])
+def perfil_publico(username):
+
+    resposta = obterUsuario(username)
     
+    return handleResponse(resposta, 'perfil')
 
-def inativarUsuario(dados):
-    id_usuario = dados.get('id')
+@usuario_bp.route('/perfil/foto', methods=['POST'])
+@login_required
+def upload_foto():
+    # Verifica se o cliente quer receber JSON (provavelmente o postman)
+    wants_json = request.accept_mimetypes.best_match(['application/json', 'text/html']) == 'application/json'
+    if 'foto_perfil' not in request.files:
+        if wants_json:
+             return handleResponse({'status': 'ERRO', 'mensagem': 'Nenhum arquivo enviado.'}, 'perfil')
+        
+        flash('Nenhum arquivo selecionado.', 'erro')
+        return redirect(url_for('usuario.perfil_publico', username=current_user.username))
     
-    if not id_usuario:
-        return {'status': 'FORM_INVALIDO', 'mensagem': 'ID do usuário é obrigatório.'}
+    arquivo = request.files['foto_perfil']
+    resposta = atualizarImagemPerfil(current_user.id, arquivo)
+    
+    if wants_json:
+        return handleResponse(resposta, 'perfil')
 
-    try:
-        usuario = Usuario.query.get(id_usuario)
+    if resposta['status'] == 'SUCESSO':
+        flash('Foto de perfil atualizada com sucesso!', 'sucesso')
+    else:
+        flash(resposta.get('mensagem', 'Erro ao atualizar foto.'), 'erro')
+    
+    return redirect(url_for('usuario.perfil_publico', username=current_user.username))
+
+
+@usuario_bp.route('/logout')
+@login_required 
+def logout():
+    logout_user() #Remove a sessão
+    return redirect(url_for('usuario.login'))
+
+@usuario_bp.route('/perfil/editar', methods=['GET', 'POST'])
+@login_required
+def editar_perfil():
+    
+    #Se for post chama o service
+    if request.method == 'POST':
+        #Recebemos dados de FORM (form-data) que contém campos de texto e arquivos
+        dados_form = request.form.to_dict()
         
-        if not usuario:
-            return {'status': 'NAO_ENCONTRADO', 'mensagem': 'Usuário não encontrado.'}
+        #Recebe o arquivo da foto
+        if 'foto_perfil' in request.files:
+            arquivo_foto = request.files['foto_perfil']
+            if arquivo_foto and arquivo_foto.filename != '':
+                #Chama o Service de Upload
+                resposta_foto = atualizarImagemPerfil(current_user.id, arquivo_foto)
+                
+                #Se o upload falhar, envia a mensagem flash
+                if resposta_foto['status'] != 'SUCESSO':
+                    flash(resposta_foto.get('mensagem'), 'erro')
+                
         
-        if not usuario.estaAtivo:
-            return {'status': 'CONFLITO', 'mensagem': 'Esta conta já está inativa.'}
-
-        #Soft delete aqui
-        usuario.deletadoEm = datetime.utcnow()
+        resposta_texto = atualizarPerfil(current_user.id, dados_form)
         
-        db.session.commit()
-        
-        return {'status': 'SUCESSO', 'mensagem': 'Conta inativada com sucesso.'}
+        #Faz redirect caso de certo a edição para o perfil
+        if resposta_texto['status'] == 'SUCESSO':
+            flash('Perfil atualizado com sucesso!', 'sucesso')
+            return redirect(url_for('usuario.perfil_publico', username=current_user.username))
+        else:
+            flash(resposta_texto.get('mensagem'), 'erro')
+            #Se der erro retorna para a edição
+            return redirect(url_for('usuario.editar_perfil')) 
 
-    except Exception as e:
-        db.session.rollback()
-        return {'status': 'ERRO_GENERICO', 'mensagem': f'Erro ao inativar: {str(e)}'}
 
-
-def reativarUsuario(dados):
-    id_usuario = dados.get('id')
-
-    if not id_usuario:
-        return {'status': 'FORM_INVALIDO', 'mensagem': 'ID do usuário é obrigatório.'}
-
-    try:
-        usuario = Usuario.query.get(id_usuario)
-        
-        if not usuario:
-            return {'status': 'NAO_ENCONTRADO', 'mensagem': 'Usuário não encontrado.'}
-        
-        if usuario.estaAtivo:
-            return {'status': 'CONFLITO', 'mensagem': 'Esta conta já está ativa.'}
-
-        #Restaura
-        usuario.deletadoEm = None
-        
-        db.session.commit()
-        
-        return {'status': 'SUCESSO', 'mensagem': 'Conta reativada com sucesso!'}
-
-    except Exception as e:
-        db.session.rollback()
-        return {'status': 'ERRO_GENERICO', 'mensagem': f'Erro ao reativar: {str(e)}'}
+    #Busca os dados do usuário logado para preencher o formulário
+    dados_usuario = current_user.to_dict()
+    
+    #Renderiza o template com a flag editando=True
+    return render_template('perfil.html', dados=dados_usuario, modo="editar_perfil")

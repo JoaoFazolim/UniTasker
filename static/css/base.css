@@ -1,0 +1,392 @@
+/* --- RESET E ESTRUTURA GERAL --- */
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- HEADER E NAVEGAÇÃO --- */
+header {
+    width: 100%;
+}
+
+.header-top {
+    background-color: #0a2439;
+    height: 20px;
+    width: 100%;
+}
+
+.header-nav {
+    background-color: #f9fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 40px;
+    border-bottom: 6px solid #c3c100;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.logo img {
+    height: 40px;
+    width: fit-content;
+}
+
+.menu {
+    display: flex;
+    gap: 40px;
+    position: relative;
+}
+
+.menu a {
+    text-decoration: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding-bottom: 3px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s ease;
+    color: #0a2439;
+}
+
+.menu a:hover {
+    border-bottom-color: #0a2439;
+}
+
+/* --- DROPDOWN MENU --- */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    min-width: 320px;
+    max-height: 450px;
+    overflow-y: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(10, 36, 57, 0.15);
+    z-index: 1000;
+    margin-top: 10px;
+    padding: 8px;
+    border: 2px solid #c3c100;
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 12px 16px;
+    color: #0a2439;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    border-bottom: none !important;
+}
+
+.dropdown-content a:hover {
+    background: #f9fafc;
+    color: #0a2439;
+    transform: translateX(5px);
+    border-bottom: none !important;
+}
+
+/* Scrollbar do Dropdown */
+.dropdown-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dropdown-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.dropdown-content::-webkit-scrollbar-thumb {
+    background: #0a2439;
+    border-radius: 10px;
+}
+
+/* --- BARRA DE PESQUISA --- */
+.search-container {
+    position: relative;
+}
+
+.search-wrapper {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    min-width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(10, 36, 57, 0.15);
+    z-index: 1000;
+    margin-top: 10px;
+    padding: 16px;
+    border: 2px solid #c3c100;
+}
+
+.search-wrapper.show {
+    display: block;
+}
+
+.search-input {
+    width: 82%;
+    padding: 10px 40px 10px 12px;
+    border: 2px solid #0a2439;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #c3c100;
+    box-shadow: 0 0 0 3px rgba(195, 193, 0, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    right: 28px;
+    top: 26px;
+    color: #0a2439;
+    font-size: 16px;
+}
+
+.search-results {
+    max-height: 350px;
+    overflow-y: auto;
+    margin-top: 12px;
+}
+
+.search-results::-webkit-scrollbar {
+    width: 8px;
+}
+
+.search-results::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+    background: #0a2439;
+    border-radius: 10px;
+}
+
+.search-results a {
+    display: block;
+    padding: 10px 12px;
+    color: #0a2439;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.search-results a:hover {
+    background: #f9fafc;
+    transform: translateX(5px);
+}
+
+.no-results {
+    padding: 20px;
+    text-align: center;
+    color: #7f8c8d;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.highlight {
+    background: #fff59d;
+    font-weight: 600;
+    padding: 1px 3px;
+    border-radius: 3px;
+}
+
+/* --- BOTÕES GERAIS --- */
+.btn-group {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    border: none;
+    padding: 8px 18px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display: inline-block;
+}
+
+.entrar {
+    background-color: white;
+    border: 2px solid #0a2439;
+    color: #0a2439;
+}
+
+.criar {
+    background-color: #0a2439;
+    color: white;
+}
+
+/* --- FOOTER (RODAPÉ) --- */
+.footer {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin-top: auto; /* Garante que o footer fique embaixo */
+}
+
+.footer-top {
+    background-color: #0a2439;
+    height: 10px;
+}
+
+.footer-content {
+    background-color: #f9fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 30px 40px;
+    border-bottom: 6px solid #c3c100;
+    width: 100%;
+    box-sizing: border-box;
+  
+    margin: 0;
+}
+
+.footer-column {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 20px;
+    padding: 0 15px;
+}
+
+.logo-info-column {
+    max-width: 300px;
+}
+
+.logo-footer {
+    height: 60px;
+    margin-bottom: 15px;
+}
+
+.footer-column h3 {
+    margin-bottom: 15px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 1.1em;
+    color: #0a2439;
+}
+
+.footer-column p {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 8px;
+}
+
+.footer-column ul li a {
+    color: #0a2439;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.3s;
+}
+
+.footer-column ul li a:hover {
+    color: #c3c100;
+}
+
+.footer-bottom {
+    background-color: #0a2439;
+    color: #bdc3c7;
+    height: auto;
+    padding: 10px 40px;
+    text-align: center;
+    font-size: 0.8em;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        padding: 20px 20px;
+        justify-content: center;
+    }
+
+    .footer-column {
+        min-width: 100%;
+        text-align: center;
+        padding: 0 5px;
+    }
+}
+/* Popup de alerta */
+.container-alertas {
+            position: fixed;
+            top: 80px; /* Abaixo do header */
+            right: 20px;
+            z-index: 9999; /* Fica acima de tudo */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Sombra para destacar */
+            border: 1px solid transparent;
+            font-size: 0.95em;
+            /* Animação de entrada */
+            animation: slideIn 0.5s ease-out;
+            /* Transição suave para sumir */
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            opacity: 1;
+        }
+
+        /* Classe para esconder suavemente */
+        .alert-hiding {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        /* Cores */
+        .alert-erro {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            border-left: 5px solid #dc3545; /* Detalhe lateral */
+        }
+        
+        .alert-sucesso {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            border-left: 5px solid #28a745; /* Detalhe lateral */
+        }
+
+        /* Animação Keyframes */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }

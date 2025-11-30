@@ -1,0 +1,92 @@
+<div class="card profile">
+                        <div class="card-body">
+                            
+                            {% if dados.imagem %}
+                                <img src="{{ url_for('static', filename='images/uploads/' + dados.imagem) }}" 
+                                    alt="Avatar" 
+                                    class="profile-img" 
+                                    style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; display: block;">
+                            {% else %}
+                                <div class="profile-img">{{ dados.nome[:2].upper() }}</div>
+                            {% endif %}
+                            
+                            <h3 id="profileName">{{ dados.nome }}</h3>
+                            <input type="text" id="editName" class="edit-field" value="{{ dados.nome }}" style="display:none;">
+                            
+                            <div class="profile-info">
+                                <p id="profileJob">{{ dados.cargo}}</p>
+                                <input type="text" id="editJob" class="edit-field" style="display:none;">
+                                <p>📍{{ dados.localizacao }}</p>
+                                
+                                <p id="profileBirthday">
+                                    <strong style="color: #0a2439;">Membro desde:</strong>
+                                    {{ dados.criadoEm[:10] if dados.criadoEm else 'N/A' }}
+                                </p>
+
+                                <p id="notaGeral">
+                                    <strong style="color: #0a2439;">★ Nota Geral:</strong> {{ "%.1f"|format(dados.notaGeral) }} / 5.0
+                                    
+                                </p>
+                            </div>
+                            
+                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;border-bottom: none;padding: 1rem;padding-bottom: 0;border-top: 1px solid #eee;margin-top: 1rem;">
+                                <h3 style="margin: 0;">Habilidades</h3>
+                                
+                             
+                                {% if dados.habilidades|length > 5 %}
+                                    <button onclick="toggleSkills()" id="btn-toggle-skills" 
+                                            style="background: none; border: none; color: #0a2439; font-size: 0.85em; cursor: pointer; padding: 0;">
+                                        Ver mais ({{ dados.habilidades|length - 5 }}) ▼
+                                    </button>
+                                {% endif %}
+                            </div>
+
+                            <div class="card-body" style="padding-top: 0.3rem;">
+                                <div class="skills" id="skillsList" style="display: flex; flex-wrap: wrap; gap: 8px; width: 100%;">
+                                    {% if dados.habilidades %}
+                                        
+                                     
+                                        {% for habilidade in dados.habilidades[:5] %}
+                                            <span class="tag" style="background: #f0f0f0; padding: 6px 12px; border-radius: 20px; font-size: 0.9em; color: #333;">{{ habilidade }}</span>
+                                        {% endfor %}
+
+                                  
+                                        {% if dados.habilidades|length > 5 %}
+                                            <div id="skills-hidden" style="display: none; flex-wrap: wrap; gap: 8px; width: 100%;">
+                                                {% for habilidade in dados.habilidades[5:] %}
+                                                    <span class="tag" style="background: #f0f0f0; padding: 6px 12px; border-radius: 20px; font-size: 0.9em; color: #333;">{{ habilidade }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+
+                                    {% else %}
+                                        <span style="color: #999; font-size: 0.9em; font-style: italic;">Nenhuma habilidade adicionada.</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            
+                            {% if current_user.is_authenticated and current_user.id == dados.id %}
+                                <a href="{{ url_for('usuario.editar_perfil') }}" id="editProfileBtn" class="btn btn-primary" style="margin-top:10px; text-decoration: none;">⚙️ Editar Perfil</a>
+                                <a href="{{ url_for('servico.criar') }}" id="newServiceBtn" class="btn btn-primary" style="margin-top:10px; text-decoration: none;">+ Novo Serviço</a>
+                            {% else %}
+                                <button id="editProfileBtn" class="btn btn-primary" style="margin-top:10px;">💬 Conversar</button>
+                                <button id="editProfileBtn" class="btn btn-primary" style="margin-top:10px;">☢️ Reportar</button>
+                            {% endif %}
+
+                            <script>
+                                function toggleSkills() {
+                                    const hiddenDiv = document.getElementById('skills-hidden');
+                                    const btn = document.getElementById('btn-toggle-skills');
+                                    
+                                    if (hiddenDiv.style.display === 'none') {
+                                        hiddenDiv.style.display = 'flex';
+                                 
+                                        btn.innerHTML = 'Ver menos ▲';
+                                    } else {
+                                        hiddenDiv.style.display = 'none';
+                                        btn.innerHTML = 'Ver mais ({{ dados.habilidades|length - 5 }}) ▼';
+                                    }
+                                }
+                            </script>
+                        </div>

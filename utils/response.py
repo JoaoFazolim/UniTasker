@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, flash, redirect
 
 
 def handleResponse(resposta, nomeTemplate):
@@ -16,7 +16,12 @@ def handleResponse(resposta, nomeTemplate):
         if resposta['status'] == 'SUCESSO':
             return render_template(f"{nomeTemplate}.html", dados = resposta['data']), codigoHttp(resposta['status'])
         else:
-            return render_template(f"{nomeTemplate}.html", mensagem = mensagem), codigoHttp(resposta['status'])
+            flash(mensagem, 'erro')
+            if request.method == 'POST':
+                return redirect(request.url)
+            else:
+
+                return render_template(f"{nomeTemplate}.html", dados=None), codigoHttp(resposta['status'])
     
 def codigoHttp(mensagemStatus):
     if mensagemStatus == 'SUCESSO':

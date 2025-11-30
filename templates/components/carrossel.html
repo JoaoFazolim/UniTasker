@@ -1,0 +1,39 @@
+<div class="card" style="overflow: hidden; margin-bottom: 20px;">
+    {% if dados.imagens %}
+        
+
+        {% set img_inicial = namespace(obj=dados.imagens[0]) %}
+        
+        {% for img in dados.imagens %}
+            {% if img.is_cover %}
+                {% set img_inicial.obj = img %}
+            {% endif %}
+        {% endfor %}
+
+ 
+        <div style="height: 400px; background: #000; display: flex; align-items: center; justify-content: center;">
+            <img id="img-main-display" 
+                 src="{{ url_for('static', filename='images/uploads/' + img_inicial.obj.caminho) }}" 
+                 style="max-width: 100%; max-height: 100%; object-fit: contain;">
+        </div>
+        
+    
+        {% if dados.imagens|length > 1 %}
+            <div style="display: flex; gap: 10px; padding: 10px; overflow-x: auto; background: #f8f9fa;">
+                {% for img in dados.imagens %}
+                    <img src="{{ url_for('static', filename='images/uploads/' + img.caminho) }}" 
+                         onclick="document.getElementById('img-main-display').src = this.src"
+                         style="width: 80px; height: 60px; object-fit: cover; cursor: pointer; border: 2px solid transparent; border-radius: 4px; transition: border-color 0.2s;"
+                         onmouseover="this.style.borderColor='#c3c100'" 
+                         onmouseout="this.style.borderColor='transparent'">
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    {% else %}
+
+        <div style="height: 300px; background: #eee; display: flex; align-items: center; justify-content: center; color: #999; font-style: italic;">
+            Sem imagens disponíveis.
+        </div>
+    {% endif %}
+</div>

@@ -1,14 +1,45 @@
 services:
   postgres:
     image: bitnami/postgresql:latest
-    ports:
+    ports:  
       - '5432:5432'
+    container_name: unitasker_db
+    restart: unless-stopped
     environment:
-      - POSTGRESQL_USER=admin
-      - POSTGRESQL_PASSWORD=admin
-      - POSTGRESQL_DATABASE=unitasker
+      - POSTGRESQL_USER=${DB_USER}
+      - POSTGRESQL_PASSWORD=${DB_PASSWORD}
+      - POSTGRESQL_DATABASE=${DB_NAME}
     volumes:
       - unitasker_pg_data:/bitnami/postgresql
 
+  backend:
+    build: .  
+    container_name: unitasker_backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - SECRET_KEY=${SECRET_KEY}
+    #Backend quebra se n esperar um pouco pro banco de dados iniciar :)
+    command: /bin/sh -c "until pg_isready -h postgres -p 5432 -U ${DB_USER}; do echo 'Aguardando Banco (2s)...'; sleep 2; done; python seed.py && exec gunicorn -w 2 -b 0.0.0.0:5000 app:app"
+    depends_on:
+      - postgres
+
+
+  caddy:
+    image: caddy:latest
+    container_name: unitasker_proxy
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+
 volumes:
   unitasker_pg_data:
+  caddy_data:
+  caddy_config:

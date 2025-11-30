@@ -1,7 +1,11 @@
-from models import db
+from extensions import db
 
 servico_tags = db.Table('servico_tags',
     db.Column('servico_id', db.Integer, db.ForeignKey('servico.id'), primary_key=True),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
+)
+usuario_tags = db.Table('usuario_tags',
+    db.Column('usuario_id', db.Integer, db.ForeignKey('usuario.id'), primary_key=True),
     db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
 )
 
