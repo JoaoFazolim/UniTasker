@@ -1,4 +1,3 @@
-unitasker.tech {
-    #Faz o proxy reverso pro flask
-    reverse_proxy * backend:5000
+:80 {
+    reverse_proxy backend:5000
 }

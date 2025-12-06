@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify, flash, redirect
 from flask_login import LoginManager, current_user
 from config import Config
 import os
-from controllers import usuario_bp, home_bp, dashboard_bp, servico_bp
-from extensions import db, login_manager
+from controllers import usuario_bp, home_bp, dashboard_bp, servico_bp, solicitacao_bp, avaliacao_bp, chat_bp
+from extensions import db, login_manager, migrate, socketio
 
 #Instanciando o app e definindo pasta de templates
 app = Flask(__name__, template_folder=os.path.join('templates'))
@@ -13,6 +13,10 @@ app.config.from_object(Config)
 
 
 login_manager.init_app(app)
+
+migrate.init_app(app, db)
+
+socketio.init_app(app)
 
 #importando tudo no models e incluindo o db no app
 from models import *
@@ -57,9 +61,14 @@ app.register_blueprint(home_bp)
 app.register_blueprint(usuario_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(servico_bp)
+app.register_blueprint(solicitacao_bp)
+app.register_blueprint(avaliacao_bp)
+app.register_blueprint(chat_bp)
+
+
 
 
 
 #Inicia a aplicação flask caso o arquivo esteja sendo executado diretamente
 if __name__  == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0')

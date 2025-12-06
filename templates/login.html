@@ -10,12 +10,12 @@
 
 <main class="container">
     
-    <div class="logo-section">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-unitasker" alt="UniTasker">
-    </div>
-
+    
     <form class="form-card" action="{{ url_for('usuario.login') }}" method="POST">
-        
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-unitasker" alt="UniTasker">
+        </div>
+        <p class="login-link">Ainda não possui uma conta? <a href="{{ url_for('usuario.cadastro') }}">Clique aqui.</a></p>
         <input type="text" name="login" placeholder="Email ou Usuário*" required>
         
         <input type="password" name="senha" placeholder="Senha*" required>
@@ -26,9 +26,9 @@
             <span>Ou</span>
         </div>
 
-        <button type="button" class="btn google">Continuar com Google</button>
-        <button type="button" class="btn facebook">Continuar com Facebook</button>
-        <button type="button" class="btn apple">Continuar com Apple</button>
+        <button type="button" class="btnC google">Continuar com Google</button>
+        <button type="button" class="btnC facebook">Continuar com Facebook</button>
+        <button type="button" class="btnC apple">Continuar com Apple</button>
     </form>
 
 </main>

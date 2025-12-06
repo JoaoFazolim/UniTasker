@@ -12,11 +12,11 @@
 
     
     
-    <div class="logo-section">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-unitasker" alt="UniTasker">
-    </div>
-
+    
     <form class="form-card" action="{{ url_for('usuario.cadastro') }}" method="POST" onsubmit="return validarSenhas()">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-unitasker" alt="UniTasker">
+        </div>
         
         <p class="login-link">Já possui uma conta? <a href="{{ url_for('usuario.login') }}">Clique aqui.</a></p>
 
@@ -41,9 +41,9 @@
             <span>Ou</span>
         </div>
 
-        <button type="button" class="btn google">Continuar com Google</button>
-        <button type="button" class="btn facebook">Continuar com Facebook</button>
-        <button type="button" class="btn apple">Continuar com Apple</button>
+        <button type="button" class="btnC google">Continuar com Google</button>
+        <button type="button" class="btnC facebook">Continuar com Facebook</button>
+        <button type="button" class="btnC apple">Continuar com Apple</button>
     </form>
     <script src="{{ url_for('static', filename='js/script-cadastro.js') }}"></script>
 </main>

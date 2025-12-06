@@ -1,0 +1,43 @@
+<div class="reviews-card">
+    <div class="card-body">
+        <h3 class="reviews-header">
+            Avaliações do Serviço <span class="review-count">({{ lista_avaliacoes|length }})</span>
+        </h3>
+        
+        {% if lista_avaliacoes %}
+            <div class="reviews-list">
+                {% for avaliacao in lista_avaliacoes %}
+                    <div class="review-item">
+                        
+                        <div class="review-meta">
+                            <div class="review-author">
+                                <div class="review-avatar">
+                                    {{ avaliacao.avaliador[:1].upper() }}
+                                </div>
+                                <span class="author-name">{{ avaliacao.avaliador }}</span>
+                            </div>
+                            <span class="review-date">{{ avaliacao.data_avaliacao[:10] }}</span>
+                        </div>
+                        
+                        <div class="star-rating">
+                            {% for i in range(avaliacao.nota|int) %}★{% endfor %}{% for i in range(5 - avaliacao.nota|int) %}<span class="star-empty">★</span>{% endfor %}
+                            <span class="rating-number">({{ avaliacao.nota }})</span>
+                        </div>
+                        
+                        <div class="review-content">
+                            {% if avaliacao.titulo %}
+                                <h5 class="review-title">{{ avaliacao.titulo }}</h5>
+                            {% endif %}
+                            <p class="review-text">"{{ avaliacao.descricao }}"</p>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-reviews">
+                <p>Este serviço ainda não recebeu avaliações.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>

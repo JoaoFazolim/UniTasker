@@ -1,0 +1,620 @@
+/* --- LAYOUT GERAL --- */
+
+    
+
+    .service-container {
+
+        display: flex;
+
+        gap: 30px;
+
+        flex-wrap: wrap; /* Permite quebrar linha no mobile */
+
+        max-width: 1300px; 
+
+        margin: 30px auto 50px auto;
+
+        padding: 0 20px; 
+
+        align-items: flex-start; /* Essencial para o Sticky funcionar */
+
+    }
+
+
+
+    /* --- COLUNA ESQUERDA --- */
+
+    .left-column{
+
+        min-width: 680px;
+
+        max-width: 680px;
+
+    }
+
+
+
+    /* Carrossel (Agora dentro da .left-column) */
+
+    .left-column .carousel-item {
+
+        height: 450px; /* Altura fixa para manter o layout estável */
+
+        background-color: #050505;
+
+        border-radius: 8px;
+
+        overflow: hidden; /* Garante bordas arredondadas na imagem */
+
+    }
+
+    
+
+    .left-column .carousel-item img {
+
+        width: 100%;
+
+        height: 100%;
+
+        object-fit: contain; 
+
+    }
+
+
+
+    /* Card Principal (Texto/Descrição) */
+
+    .card-principal {
+
+        background-color: white;
+
+        border-radius: 8px;
+
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+
+        margin-top: 25px; 
+
+        border: 1px solid #e5e7eb;
+
+        overflow: hidden;
+
+    }
+
+
+
+    .card-principal .card-body {
+
+        padding: 30px;
+
+    }
+
+
+
+    /* --- COLUNA DIREITA (AGORA É O CARD STICKY) --- */
+
+    
+
+    .right-column {
+
+        /* Definições de Tamanho */
+
+        flex: 1; 
+
+        min-width: 580px; /* Largo o suficiente para o botão não quebrar */
+
+        
+
+        /* Estilo Visual (Transformando a coluna em Card) */
+
+        background: white;
+
+        border-radius: 8px;
+
+        box-shadow: 0 4px 20px rgba(10, 36, 57, 0.08);
+
+        border: 1px solid #e5e7eb;
+
+        
+
+        /* Comportamento Sticky */
+
+        position: sticky;
+
+        top: 20px;
+
+        z-index: 90;
+
+        overflow: hidden;
+
+    }
+
+
+
+    /* --- ELEMENTOS INTERNOS (Tipografia, Badges, etc) --- */
+
+
+
+    h1.service-title {
+
+        color: #0a2439;
+
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+        font-size: 2.2rem;
+
+        font-weight: 700;
+
+        margin: 15px 0 25px 0;
+
+        line-height: 1.2;
+
+    }
+
+
+
+    .category-badge {
+
+        background-color: #0a2439;
+
+        color: #fff;
+
+        padding: 6px 14px;
+
+        border-radius: 4px;
+
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+
+        font-size: 0.8rem;
+
+        font-weight: 600;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+
+        display: inline-block;
+
+    }
+
+
+
+    .tag-pill {
+
+        background-color: #f1f3f5;
+
+        color: #495057;
+
+        padding: 6px 14px;
+
+        border-radius: 20px;
+
+        font-size: 0.85em;
+
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+
+        margin-right: 6px;
+
+        margin-bottom: 8px;
+
+        display: inline-block;
+
+        border: 1px solid #dee2e6;
+
+        transition: all 0.2s;
+
+    }
+
+    .tag-pill:hover { background-color: #dee2e6; color: #0a2439; }
+
+
+
+    /* Markdown */
+
+    .markdown-content {
+
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+        color: #333;
+
+        line-height: 1.8;
+
+        font-size: 1.05rem;
+
+    }
+
+    .markdown-content p { margin-bottom: 15px; }
+
+    .markdown-content ul, .markdown-content ol { padding-left: 20px; margin-bottom: 15px; }
+
+
+
+    /* --- PREÇO E PRESTADOR --- */
+
+
+
+    .price-display {
+
+        text-align: center;
+
+        padding: 30px 20px;
+
+        background: linear-gradient(to bottom, #ffffff, #f9fafc);
+
+        border-bottom: 1px solid #eee;
+
+    }
+
+
+
+    .price-label {
+
+        color: #6c757d;
+
+        font-family: 'Segoe UI', sans-serif;
+
+        font-size: 0.8em;
+
+        text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin: 0;
+
+    }
+
+
+
+    .price-value {
+
+        color: #0a2439; margin: 5px 0 0 0;
+
+        font-family: 'Segoe UI', sans-serif; font-size: 2.2rem; font-weight: 800;
+
+    }
+
+    .price-value::after {
+
+        content: ''; display: block; width: 40px; height: 3px;
+
+        background-color: #c3c100; margin: 10px auto 0; border-radius: 2px;
+
+    }
+
+
+
+    .provider-box {
+
+        display: flex; align-items: center; gap: 15px; padding: 20px;
+
+        background-color: #fff; border-bottom: 1px solid #f0f0f0; transition: background 0.2s;
+
+    }
+
+    .provider-box:hover { background-color: #f9fafc; }
+
+
+
+    .provider-avatar, .provider-initials {
+
+        width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
+
+    }
+
+    .provider-initials {
+
+        background-color: #0a2439; color: #c3c100; border: 2px solid #c3c100;
+
+        display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em;
+
+    }
+
+    .provider-info p { margin: 0; font-weight: 700; color: #0a2439; font-size: 1rem; }
+
+    .provider-info a { font-size: 0.85em; color: #666; text-decoration: none; }
+
+    .provider-info a:hover { color: #c3c100; text-decoration: underline; }
+
+
+
+    /* --- BOTÕES E INPUTS --- */
+
+
+
+    .offer-input {
+
+        width: 100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 6px;
+
+        font-size: 0.95em; box-sizing: border-box; background-color: #f9fafc; transition: all 0.2s;
+
+    }
+
+    .offer-input:focus {
+
+        border-color: #c3c100; background-color: #fff; outline: none;
+
+        box-shadow: 0 0 0 3px rgba(195, 193, 0, 0.1);
+
+    }
+
+
+
+    .btn-block {
+
+        width: 100%; padding: 14px 15px; font-size: 1rem; font-weight: 600;
+
+        border-radius: 6px; cursor: pointer; border: none; transition: all 0.2s;
+
+        text-align: center; display: block; text-decoration: none; box-sizing: border-box;
+
+    }
+
+    .btn-block:active { transform: translateY(1px); box-shadow: none; }
+
+
+
+    .btn-primary-brand { background-color: #0a2439; color: white; }
+
+    .btn-primary-brand:hover { background-color: #0f3552; box-shadow: 0 4px 8px rgba(10, 36, 57, 0.2); }
+
+
+
+    .btn-success-brand { background-color: #27ae60; color: white; }
+
+    .btn-success-brand:hover { background-color: #219150; }
+
+
+
+    .btn-danger-brand { background-color: #fff; color: #c0392b; border: 2px solid #c0392b; }
+
+    .btn-danger-brand:hover { background-color: #c0392b; color: white; }
+
+
+
+    .status-panel {
+
+        padding: 20px; border-radius: 8px; margin: 20px;
+
+        border-left: 5px solid; border: 1px solid rgba(0,0,0,0.05);
+
+    }
+
+
+
+    /* --- RESPONSIVIDADE (FIX MINIMALISTA) --- */
+
+    @media (max-width: 1050px) {
+
+        .service-container {
+
+            flex-direction: column !important; /* Força o empilhamento */
+
+            max-width: 700px !important;
+
+        }
+
+        
+
+        /* Override da largura fixa da Coluna Esquerda */
+
+        .left-column {
+
+            min-width: 100% !important;
+
+            max-width: 100% !important;
+
+        }
+
+
+
+        /* Override do style="flex: 2; min-width: 300px;" na div wrapper do HTML */
+
+        .service-container > div:first-child {
+
+            width: 100% !important; 
+
+            min-width: 0 !important;
+
+            flex: none !important;
+
+        }
+
+        
+
+        .right-column {
+
+            width: 100% !important;
+
+            min-width: 100% !important;
+
+            max-width: 100% !important;
+
+            position: relative !important; /* Remove sticky no mobile */
+
+            top: 0 !important;
+
+            margin-bottom: 30px;
+
+        }
+
+        .left-column .carousel-item { height: 300px; }
+
+    }
+
+    /* --- LAYOUT GERAL E COLUNAS (FIXO E FUNCIONAL) --- */
+.service-container {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap; 
+    max-width: 1300px; 
+    margin: 30px auto 50px auto;
+    padding: 0 20px; 
+    align-items: flex-start; 
+}
+
+
+/* Coluna Direita (Sticky Card) */
+.right-column {
+    flex: 1; 
+    min-width: 380px; 
+    max-width: 420px; 
+    
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(10, 36, 57, 0.08);
+    border: 1px solid #e5e7eb;
+    
+    position: sticky;
+    top: 20px;
+    z-index: 90;
+    overflow: hidden;
+}
+
+/* --- ESTILOS DE CONTEÚDO E UTILIDADES (Base da página) --- */
+
+/* Markdown Content (Override de cor e espaçamento inline) */
+.markdown-content {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+.markdown-content p { margin-bottom: 15px; }
+
+/* Linha Divisória */
+.card-body hr {
+    border-top: 1px solid #eee;
+    margin: 30px 0;
+}
+
+/* Título de Tags */
+.tag-container h4 {
+    color: #0a2439;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+/* Form Labels e Inputs (Gerais) */
+.form-label-action { font-size: 0.95em; font-weight: bold; color: #555; display:block; margin-bottom: 5px; }
+.offer-input {
+    width: 100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 6px;
+    font-size: 0.95em; box-sizing: border-box; background-color: #f9fafc; transition: all 0.2s;
+}
+.offer-input:focus { border-color: #c3c100; background-color: #fff; outline: none; box-shadow: 0 0 0 3px rgba(195, 193, 0, 0.1); }
+
+/* Botões de Ação */
+.btn-block {
+    width: 100%; padding: 14px 15px; font-size: 1rem; font-weight: 600;
+    border-radius: 6px; cursor: pointer; border: none; transition: all 0.2s;
+    text-align: center; display: block; text-decoration: none; box-sizing: border-box;
+}
+.btn-primary-brand { background-color: #0a2439; color: white; }
+.btn-primary-brand:hover { background-color: #0f3552; box-shadow: 0 4px 8px rgba(10, 36, 57, 0.2); }
+.btn-success-brand { background-color: #27ae60; color: white; }
+.btn-danger-brand { background-color: #c0392b; color: white; border: none; }
+
+
+/* --- BLOCO 1: LISTAGEM DE AVALIAÇÕES --- */
+
+.reviews-card {
+    background-color: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-top: 30px; border: 1px solid #e5e7eb; overflow: hidden; max-width: 100%;
+}
+.reviews-card .card-body { padding: 30px; }
+.reviews-header {
+    color: #0a2439; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #f1f3f5;
+    font-size: 1.5rem; font-weight: 700;
+}
+.review-item { border-bottom: 1px solid #f1f3f5; padding-bottom: 25px; margin-bottom: 25px; }
+.review-item:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+
+.review-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 10px; }
+.review-author { display: flex; align-items: center; gap: 12px; }
+.review-avatar {
+    width: 36px; height: 36px; min-width: 36px; background: #0a2439; color: #c3c100;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9em; font-weight: bold;
+}
+
+.review-content {
+    background-color: #f8f9fa; padding: 15px; border-radius: 0 8px 8px 0; border-left: 4px solid #c3c100;
+    width: 100%; box-sizing: border-box; word-break: break-word; overflow-wrap: break-word; 
+}
+.review-title { margin: 0 0 5px 0; font-size: 1rem; color: #0a2439; font-weight: 700; }
+.review-text { margin: 0; color: #555; font-size: 0.95em; line-height: 1.6; font-style: italic; }
+
+
+/* --- BLOCO 2: FORMULÁRIO DE AVALIAÇÃO --- */
+
+.review-form-card {
+    background-color: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-top: 30px; border: 1px solid #e5e7eb; border-top: 5px solid #c3c100; overflow: hidden;
+}
+.review-form-body { padding: 30px; }
+.review-form-title { color: #0a2439; margin-bottom: 10px; font-weight: 700; font-size: 1.4rem; }
+.review-form-desc { color: #666; font-size: 0.95em; margin-bottom: 25px; }
+
+/* Estilo do Input do Formulário de Avaliação */
+.form-label-bold { font-weight: 600; display: block; margin-bottom: 8px; color: #0a2439; font-size: 0.95em; }
+.form-control-styled {
+    width: 100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 6px;
+    font-size: 0.95em; box-sizing: border-box; background-color: #f9fafc; transition: all 0.2s;
+    margin-bottom: 20px;
+}
+/* Estrelas (Visual) */
+.star-rating-container {
+    margin-bottom: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px; 
+    display: inline-block; border: 1px solid #e9ecef;
+}
+
+
+/* --- RESPONSIVIDADE (FIX MINIMALISTA DE COLUNAS) --- */
+@media (max-width: 1050px) {
+    .service-container {
+        flex-direction: column !important;
+        max-width: 700px !important;
+    }
+    
+    /* Override do style="flex: 2; min-width: 300px;" na div wrapper do HTML */
+    .service-container > div:first-child {
+        width: 100% !important;
+        min-width: 0 !important;
+        flex: none !important;
+    }
+
+    .right-column {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        position: relative !important; /* Remove sticky no mobile */
+        top: 0 !important;
+        margin-bottom: 30px !important;
+    }
+    
+    /* Ajuste de conteúdo interno */
+    .left-column .carousel-item { height: 300px; }
+}
+
+/* --- REGRA 1: NOVO CARD MOBILE (Escondido no Desktop) --- */
+.mobile-action-card {
+    display: none; /* Por padrão, o card duplicado fica escondido */
+    
+    /* Adicione estilos de Card aqui para o visual: */
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+    overflow: hidden;
+    
+    /* Garante que o card ocupe o centro da tela no mobile */
+    margin: 20px auto; 
+    max-width: 420px; 
+}
+
+
+/* --- REGRA 2: LÓGICA DE OVERRIDE (Mobile) --- */
+@media (max-width: 1050px) {
+    
+    /* A) Esconde a Coluna Sticky Original */
+    .right-column {
+        display: none !important; 
+    }
+    
+    /* B) Mostra o Card Duplicado no Fluxo Normal */
+    .mobile-action-card {
+        display: block !important;
+    }
+}

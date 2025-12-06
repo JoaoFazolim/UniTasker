@@ -1,0 +1,106 @@
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+{% endblock %}
+
+<div id="chat-container" class="chat-collapsed">
+    
+    <h2>Chat</h2> 
+    
+    <div id="chat-principal">
+    
+        <div id="lista-conversas">
+        
+
+            <div id="threads-header">
+                <h4>Conversas</h4>
+            </div>
+            <button id="btn-novo-chat">+ Novo Chat</button>
+
+            <div id="modal-novo-chat" style="display:none;">
+                <h3>Iniciar Nova Conversa</h3>
+                
+                <label for="input-busca">Buscar Usuário:</label>
+                <input type="text" id="input-busca" placeholder="Digite o nome ou ID do usuário">
+                <div id="resultados-busca">
+                    </div>
+
+                <div id="area-envio-inicial" style="display:none;">
+                    <h4>Enviando para: <span id="destinatario-nome-display"></span></h4>
+                    <textarea id="primeira-mensagem-input" placeholder="Digite a primeira mensagem..."></textarea>
+                    <button id="btn-enviar-primeira-msg">Enviar Primeira Mensagem</button>
+                    <input type="hidden" id="destinatario-id-hidden"> </div>
+                
+                <button id="btn-fechar-modal">Fechar</button>
+            </div>
+
+            <ul id="lista-de-threads">
+                <li class="thread-item thread-ativo" data-conversa-id="ID_DA_CONVERSA_ATUAL">
+                    <div class="avatar-contato">
+                        <img class="avatar-mini" src=""/>
+                    </div>
+                    <div class="info-conversa">
+                        <span class="nome-contato">Nome do Contato</span>
+                        <span class="ultima-mensagem">Conteúdo da última mensagem...</span>
+                    </div>
+                    <span class="data-ultima-msg">Data</span>
+                </li>
+                <li class="thread-item" data-conversa-id="ID_DE_OUTRA_CONVERSA">
+                    <div class="avatar-contato"></div>
+                    <div class="info-conversa">
+                        <span class="nome-contato">Outro Contato</span>
+                        <span class="ultima-mensagem">Você: Sua última resposta...</span>
+                    </div>
+                    <span class="data-ultima-msg">Data</span>
+                </li>
+                
+            </ul>
+        </div>
+        
+        <div id="janela-mensagens">
+            
+            <header id="cabecalho-conversa">
+                <div class="avatar-contato">
+                    <img id="header-avatar-img" class="avatar-mini" src=""/>
+                </div>
+                <div class="info-contato">
+                    <span class="nome-contato"></span>
+                    <span class="detalhes-contato"></span>
+                </div>
+                <div class="botoes-acao"></div> 
+            </header>
+            
+            <div id="messages-display">
+                <div class="mensagem-bloco contato-msg">
+                    <div class="avatar-contato"></div>
+                    <div class="conteudo-msg">
+                        <p></p>
+                        <span class="hora-msg"></span>
+                    </div>
+                </div>
+                
+                <div class="mensagem-bloco minha-msg">
+                    <div class="conteudo-msg">
+                        <p></p>
+                        <span class="hora-msg"></span>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div id="input-area">
+                <textarea id="message-input" placeholder="Message"></textarea>
+                <div id="botoes-input">
+                     <button id="send-button">Enviar</button>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+</div>
+
+<input type="hidden" id="user-id" value="{{ current_user.id }}">
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='js/script-colapsarChat.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script-chat.js') }}"></script>

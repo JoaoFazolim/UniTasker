@@ -80,15 +80,16 @@ def criarServico(dados, lista_arquivos, usuario_logado):
 
 
 def listarServicos(filtros=None):
-
     try:
         #Começa buscando apenas serviços ativos
         query = Servico.query.filter_by(estado='ativo')
 
         if filtros:
-            if filtros.get('categoria_id'):
-                query = query.filter_by(categoria_id=filtros['categoria_id'])
+            #Filtro por Categoria (verifica a chave 'categoria')
+            if filtros.get('categoria'):
+                query = query.filter_by(categoria_id=filtros['categoria'])
 
+            #Filtro por Texto (busca)
             if filtros.get('busca'):
                 termo = f"%{filtros['busca']}%"
                 
@@ -97,7 +98,7 @@ def listarServicos(filtros=None):
                     or_(
                         Servico.titulo.ilike(termo),
                         Servico.descricaoMD.ilike(termo)
-                        )
+                    )
                 )
 
         #Ordena por mais recentes
@@ -136,7 +137,7 @@ def processar_imagens_servico(servico, lista_novos_arquivos=None, ids_remover=[]
             for img_id in ids_remover:
                 imagem = ServicoImagem.query.get(img_id)
                 
-                #Só apaga se a imagem pertencer ao serviço serviço
+                #Só apaga se a imagem pertencer ao serviço
                 if imagem and imagem.servico_id == servico.id:
                     # Remove do disco
                     caminho_pasta = current_app.config['UPLOAD_FOLDER']

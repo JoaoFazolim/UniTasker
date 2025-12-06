@@ -1,5 +1,5 @@
 from .avaliacao import Avaliacao
-from .usuario import Usuario
+from .usuario import Usuario, UsuarioPortfolio
 from .servico import Servico, ServicoImagem
 from .tag import Tag, servico_tags
 from .conversa import Conversa

@@ -20,9 +20,12 @@ services:
       - DATABASE_URL=postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
       - SECRET_KEY=${SECRET_KEY}
     #Backend quebra se n esperar um pouco pro banco de dados iniciar :)
-    command: /bin/sh -c "until pg_isready -h postgres -p 5432 -U ${DB_USER}; do echo 'Aguardando Banco (2s)...'; sleep 2; done; python seed.py && exec gunicorn -w 2 -b 0.0.0.0:5000 app:app"
+    command: /bin/sh -c "sleep 5 && python seed.py && exec gunicorn -k eventlet -w 2 -b 0.0.0.0:5000 app:app"
     depends_on:
       - postgres
+    volumes:
+      #Volume de uploads para eles persistirem após um build do backend 
+      - unitasker_uploads:/app/static/images/uploads
 
 
   caddy:
@@ -31,7 +34,6 @@ services:
     restart: unless-stopped
     ports:
       - "8080:80"
-      - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
@@ -43,3 +45,4 @@ volumes:
   unitasker_pg_data:
   caddy_data:
   caddy_config:
+  unitasker_uploads:

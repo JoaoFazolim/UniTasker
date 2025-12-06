@@ -49,7 +49,7 @@ def enviarMensagem(dados, usuario_remetente):
         db.session.commit()
 
         return {
-            'status': 'SUCESSO',
+            'status': 'CRIADO',
             'mensagem': 'Mensagem enviada!',
             'data': {
                 'id': nova_mensagem.id,

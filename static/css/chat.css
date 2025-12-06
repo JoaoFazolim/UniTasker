@@ -1,0 +1,317 @@
+/*
+======================================================
+1. DEFINIÇÃO DE VARIÁVEIS INTERNAS (DENTRO DO CONTEINER)
+    Estas variáveis só existem para o escopo do #chat-container
+======================================================
+*/
+#chat-container {
+    /* SUAS CORES */
+    --primary-color: #c3c100;    
+    --bg-main: #0a2439;         
+    --text-light: #ffffff;       
+    
+    /* CORES CALCULADAS INTERNAS */
+    --bg-secondary: #12344f;     
+    --border-color: #1f4262;     
+    --hover-bg: #2a5075;         
+    
+    /* GERAL: Posicionamento Fixo e Tema Escuro */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 800px; /* Largura padrão */
+    height: 600px; /* Altura padrão */
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    z-index: 1000; /* Garante que fique acima de tudo */
+    font-family: Arial, sans-serif;
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+
+/* Estado Colapsado (Habilita o JS de Colapsar/Expandir) */
+.chat-collapsed #chat-principal {
+    display: none;
+
+}
+
+/* Título de Toggle (H2) */
+#chat-container h2 {
+    background-color: var(--bg-secondary);
+    color: var(--text-light);
+    padding: 10px 15px;
+    margin: 0;
+    font-size: 1.1em;
+    cursor: pointer;
+}
+
+/* Container de Duas Colunas */
+#chat-principal {
+    display: flex; 
+    flex-grow: 1;
+    overflow: hidden; 
+}
+
+/*
+======================================================
+2. COLUNA DA ESQUERDA (LISTA DE CONVERSAS)
+======================================================
+*/
+#lista-conversas {
+    position: relative; 
+    width: 35%; 
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+    min-width: 250px;
+}
+
+#threads-header, #lista-conversas header {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#btn-novo-chat {
+    background-color: var(--primary-color);
+    color: var(--bg-main); /* Texto escuro no botão de destaque */
+    border: none;
+    padding: 8px;
+    margin: 0 15px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#lista-de-threads {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+#lista-de-threads::-webkit-scrollbar {
+    /* Oculta a barra de rolagem visual */
+    display: none;
+    width: 0; 
+}
+
+.thread-item {
+    display: flex;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    align-items: center;
+}
+
+.thread-item:hover {
+    background-color: var(--hover-bg);
+}
+
+.thread-ativo {
+    background-color: var(--hover-bg);
+    border-left: 3px solid var(--primary-color);
+    padding-left: 12px;
+}
+
+.info-conversa {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    overflow: hidden;
+}
+
+.ultima-mensagem, .data-ultima-msg {
+    color: var(--text-light);
+    opacity: 0.8;
+    font-size: 0.8em;
+}
+
+/*
+======================================================
+3. COLUNA DA DIREITA (JANELA DE MENSAGENS)
+======================================================
+*/
+#janela-mensagens {
+    width: 65%; 
+    background-color: var(--bg-main);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#cabecalho-conversa {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+}
+.nome-contato{
+    margin-left: 1rem;
+}
+
+#messages-display {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+}
+
+#messages-display::-webkit-scrollbar {
+    /* Oculta a barra de rolagem visual */
+    display: none;
+    width: 0; 
+}
+
+/* Estilo dos Balões de Mensagem */
+.conteudo-msg {
+    background-color: var(--hover-bg); 
+    color: var(--text-light);
+    border-radius: 18px;
+    padding: 8px 12px;
+    font-size: 0.9em;
+    margin-bottom: 8px;
+
+    border-bottom-left-radius: 0;
+    margin-left: 0;
+    margin-right: 2rem;
+}
+
+.minha-msg .conteudo-msg {
+    background-color: var(--primary-color); 
+    color: var(--bg-main); /* Texto escuro para contraste no destaque */
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 18px;
+    margin-left: 2rem;
+    margin-right: 0;
+}
+
+/* Área de Input */
+#input-area {
+    padding: 10px 15px;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+}
+
+#message-input {
+    background-color: var(--bg-main);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    flex-grow: 1;
+    resize: none;
+    padding: 8px;
+    margin-bottom: 0;
+}
+
+#send-button {
+    background-color: var(--primary-color);
+    color: var(--bg-main);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    margin-left: 6px;
+}
+
+#btn-fechar-modal{
+    background-color: var(--primary-color);
+    color: var(--bg-main);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+}
+
+
+/*
+======================================================
+4. MODAL DE NOVO CHAT (SOBREPOSIÇÃO NA COLUNA ESQUERDA)
+======================================================
+*/
+#modal-novo-chat {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-secondary); 
+    z-index: 10; 
+    padding: 15px;
+    display: none; /* Inicialmente oculto pelo JS/HTML */
+    flex-direction: column;
+}
+
+#input-busca, #primeira-mensagem-input {
+    background-color: var(--bg-main);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+   
+}
+
+#chat-container.chat-collapsed {
+    /* Define o tamanho mínimo para o chat colapsado */
+    background-color: var(--bg-secondary);
+    width: 100px; /* Largura mínima (só para caber o título) */
+    height: 40px; /* Altura da barra de título */
+    border-radius: 8px 8px 8px 8px; /* Opcional: mantém o canto arredondado */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-collapsed #chat-principal {
+    display: none !important; /* Esconde todo o conteúdo interno de colunas */
+}
+
+.avatar-contato{
+    width: 2.5rem;
+    height: 2.5rem;
+
+}
+.avatar-mini{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 100%;
+}
+.resultado-usuario{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    
+}
+
+.btn-selecionar{
+    background-color: var(--primary-color);
+    color: var(--bg-main);
+    border: 1px solid black;
+    padding: 4px 7px;
+    border-radius: 8px;
+
+}
+
+#btn-enviar-primeira-msg{
+    background-color: var(--primary-color);
+    color: var(--bg-main);
+    border: 1px solid black;
+    padding: 4px 7px;
+    border-radius: 8px;
+
+}
+
+.thread-item .nome-contato{
+    margin-left: 0;
+}

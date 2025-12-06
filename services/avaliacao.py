@@ -99,3 +99,36 @@ def listarAvaliacoesUsuario(id_usuario):
         }
     except Exception as e:
         return {'status': 'ERRO_GENERICO', 'mensagem': str(e)}
+    
+
+def verificarPodeAvaliar(id_servico, usuario_logado):
+   
+    #Verifica login
+    if not usuario_logado.is_authenticated:
+        return False
+
+    try:
+        #Busca se existe uma solicitação CONCLUÍDA para este serviço e cliente
+        solicitacao_concluida = Solicitacao.query.filter_by(
+            servico_id=id_servico,
+            cliente_id=usuario_logado.id,
+            status='concluida'
+        ).first()
+        
+        if not solicitacao_concluida:
+            return False 
+
+        # Verifica se JÁ avaliou (para evitar duplicidade)
+        ja_avaliou = Avaliacao.query.filter_by(
+            servico_id=id_servico,
+            usuario_avaliador_id=usuario_logado.id
+        ).first()
+        
+        if ja_avaliou:
+            return False
+
+        return True 
+
+    except Exception as e:
+        print(f"Erro ao verificar se pode avaliar: {e}")
+        return False

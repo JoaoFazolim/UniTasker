@@ -1,0 +1,40 @@
+<div class="review-form-card">
+    <div class="review-form-body">
+        <h3 class="review-form-title">Avaliar Serviço</h3>
+        <p class="review-form-desc">
+            O serviço foi concluído! Deixe sua opinião para ajudar a comunidade do UniTasker.
+        </p>
+        
+        <form action="{{ url_for('avaliacao.criar') }}" method="POST">
+            <input type="hidden" name="servico_id" value="{{ dados.id }}">
+            
+            <div class="form-group">
+                <label class="form-label-bold">Sua Nota:</label>
+                
+                <div class="star-rating-container">
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="nota" value="5" required><label for="star5" title="Excelente">★</label>
+                        <input type="radio" id="star4" name="nota" value="4"><label for="star4" title="Muito Bom">★</label>
+                        <input type="radio" id="star3" name="nota" value="3"><label for="star3" title="Bom">★</label>
+                        <input type="radio" id="star2" name="nota" value="2"><label for="star2" title="Ruim">★</label>
+                        <input type="radio" id="star1" name="nota" value="1"><label for="star1" title="Péssimo">★</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label-bold">Título da Avaliação</label>
+                <input type="text" name="titulo" class="form-control-styled" placeholder="Ex: Profissional muito atencioso!" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label-bold">Comentário</label>
+                <textarea name="descricao" rows="3" class="form-control-styled" placeholder="Conte detalhes sobre como foi o serviço..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-block btn-primary-brand">
+                Enviar Avaliação
+            </button>
+        </form>
+    </div>
+</div>

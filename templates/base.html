@@ -35,45 +35,48 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KLS6KLB3"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-
-
+    {% if current_user.is_authenticated %}
+    {% include "components/chat.html" %}
+    {% endif %}
     <header class="header">
         
 
         <div class="header-top"></div>
-        <div class="header-nav">
-            <div class="logo">    
-                <a href="{{ url_for('home.home') }}">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="UniTasker" class="logo">
-                </a>
+        <div class="header-nav" id="headerNav"> <div class="logo">    
+        <a href="{{ url_for('home.home') }}">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="UniTasker" class="logo">
+        </a>
+    </div>
+
+    <button class="hamburger-menu" id="hamburgerBtn" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="nav-links-container" id="navLinks">
+        <nav class="menu">
+            <a href="{{ url_for('home.home') }}" id="inicio">Início</a>
+            <a href="{{ url_for('servico.listar') }}" id="servicos">Serviços</a>
+            
+            <div class="dropdown">
+                <a href="#" id="categorias">Categorias</a>
+                <div class="dropdown-content" id="dropdown-menu"></div>
             </div>
+        </nav>
 
-            <nav class="menu">
-                <a href="{{ url_for('home.home') }}" id="inicio">Início</a>
-
-               
-                <a href="{{ url_for('servico.listar') }}" id="servicos">Serviços</a>
-                    
-
-                <div class="dropdown">
-                    <a href="#" id="categorias">Categorias</a>
-                    <div class="dropdown-content" id="dropdown-menu"></div>
-                </div>
-
-            </nav>
-
-            <div class="btn-group">
-              
-                {% if current_user.is_authenticated %}
-                    <span class="btn" style="border:none; cursor:default;">Olá, {{ current_user.nome }}</span>
-                    <a href="{{ url_for('usuario.perfil_publico', username=current_user.username) }}" class="btn criar">Meu Perfil</a>
-                    <a href="{{ url_for('usuario.logout') }}" class="btn criar">Sair</a>
-                {% else %}
-                    <a href="{{ url_for('usuario.login') }}" class="btn entrar">Entrar</a>
-                    <a href="{{ url_for('usuario.cadastro') }}" class="btn criar">Criar Conta</a>
-                {% endif %}
-            </div>
+        <div class="btn-group">
+            {% if current_user.is_authenticated %}
+                <span class="user-greeting">Olá, {{ current_user.nome }}</span>
+                <a href="{{ url_for('usuario.perfil_publico', username=current_user.username) }}" class="btn criar">Meu Perfil</a>
+                <a href="{{ url_for('usuario.logout') }}" class="btn criar">Sair</a>
+            {% else %}
+                <a href="{{ url_for('usuario.login') }}" class="btn entrar">Entrar</a>
+                <a href="{{ url_for('usuario.cadastro') }}" class="btn criar">Criar Conta</a>
+            {% endif %}
         </div>
+    </div>
+</div>
     </header>
 
     <div class="container-alertas">
@@ -129,6 +132,57 @@
 
     <script src="{{ url_for('static', filename='js/script-pesq-cat.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script-alerta.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const navLinks = document.getElementById('navLinks');
+            const dropdownLink = document.getElementById('categorias');
+            const dropdownMenu = document.getElementById('dropdown-menu');
 
+            // 1. Lógica do Menu Hambúrguer Principal
+            if (hamburgerBtn && navLinks) {
+                hamburgerBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Evita bugs de clique duplo
+                    navLinks.classList.toggle('active');
+                    hamburgerBtn.classList.toggle('active');
+                });
+
+                // Fecha ao clicar fora (Opcional, mas elegante)
+                document.addEventListener('click', function(e) {
+                    if (!navLinks.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                        navLinks.classList.remove('active');
+                        hamburgerBtn.classList.remove('active');
+                    }
+                });
+            }
+
+            // 2. Lógica Inteligente dos Links
+            const allLinks = navLinks.querySelectorAll('a');
+            
+            allLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    
+                    // SE FOR O LINK DE CATEGORIAS
+                    if (link === dropdownLink) {
+                        // Se estiver no mobile (tela pequena)
+                        if (window.innerWidth <= 900) {
+                            e.preventDefault(); // Não recarrega a página nem sobe pro topo
+                            dropdownMenu.classList.toggle('show-mobile'); // Abre/Fecha submenu
+                            return; // PARA AQUI! Não deixa fechar o menu principal
+                        }
+                    }
+
+                    // SE FOR QUALQUER OUTRO LINK (Início, Serviços, Perfil, ou um item DENTRO do dropdown)
+                    // Fecha o menu hambúrguer
+                    if (window.innerWidth <= 900) {
+                        navLinks.classList.remove('active');
+                        hamburgerBtn.classList.remove('active');
+                        // Fecha o submenu também pra limpar a próxima vez
+                        if (dropdownMenu) dropdownMenu.classList.remove('show-mobile'); 
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

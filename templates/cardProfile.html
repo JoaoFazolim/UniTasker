@@ -67,12 +67,14 @@
 
                             
                             {% if current_user.is_authenticated and current_user.id == dados.id %}
-                                <a href="{{ url_for('usuario.editar_perfil') }}" id="editProfileBtn" class="btn btn-primary" style="margin-top:10px; text-decoration: none;">⚙️ Editar Perfil</a>
+                                <a href="{{ url_for('usuario.editar_perfil') }}"  class="btn btn-primary" style="margin-top:10px; text-decoration: none;">⚙️ Editar Perfil</a>
                                 <a href="{{ url_for('servico.criar') }}" id="newServiceBtn" class="btn btn-primary" style="margin-top:10px; text-decoration: none;">+ Novo Serviço</a>
                             {% else %}
-                                <button id="editProfileBtn" class="btn btn-primary" style="margin-top:10px;">💬 Conversar</button>
-                                <button id="editProfileBtn" class="btn btn-primary" style="margin-top:10px;">☢️ Reportar</button>
+                                <button id="btn-conversa-perfil" class="btn btn-primary" style="margin-top:10px;">💬 Conversar</button>
+                                <button class="btn btn-primary" style="margin-top:10px;"onclick="alert('A gente vai pegar ele 🔫💀')">☢️ Reportar</button>
                             {% endif %}
+                            <input type="hidden" id="destinatario-perfil-id" value="{{ dados.id }}">
+                            <input type="hidden" id="destinatario-perfil-nome" value="{{ dados.nome }}">
 
                             <script>
                                 function toggleSkills() {

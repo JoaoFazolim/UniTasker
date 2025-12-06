@@ -1,143 +1,120 @@
 # UniTasker 🎓
 
-> 🚀 Plataforma web de freelance e voluntariado exclusiva para estudantes da Uniso. Um ecossistema para ganhar experiência, construir portfólio e colaborar.
+> 🚀 Plataforma web de freelancing e voluntariado criada para conectar estudantes universitários. Um ecossistema pensado para ganhar experiência real, construir portfólio e colaborar em projetos.
 
-![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python)
-![Flask](https://img.shields.io/badge/Flask-2.0-black?logo=flask)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13-blue?logo=postgresql)
-
----
-
-### Tabela de Conteúdos
+## 📋 Tabela de Conteúdos
 1. [Sobre o Projeto](#-sobre-o-projeto)
 2. [Features](#-features)
-3. [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-4. [Arquitetura](#️-arquitetura)
-5. [Estrutura de Dados](#-estrutura-de-dados)
-6. [Telas e Protótipos](#-telas-e-protótipos)
-7. [Começando](#-começando)
-8. [Autores](#-autores)
+3. [Arquitetura e Tecnologias](#-arquitetura-e-tecnologias)
+4. [Estrutura de Dados](#-estrutura-de-dados)
+5. [Instalação e Execução](#-instalação-e-execução)
+6. [Autores](#-autores)
 
 ---
 
 ## 📜 Sobre o Projeto
 
-O **UniTasker** nasceu da observação de que, dentro da Universidade de Sorocaba, existe um vasto potencial de colaboração inexplorado. O projeto visa resolver a dificuldade de conexão entre alunos de diferentes cursos, criando um ecossistema exclusivo onde estudantes podem:
+O **UniTasker** nasceu da observação de que, dentro do ambiente universitário, existe um vasto potencial de colaboração inexplorado. O projeto visa resolver a dificuldade de conexão entre alunos de diferentes cursos, criando um marketplace de serviços onde estudantes podem:
 
-* **Solicitar serviços** para seus projetos acadêmicos e pessoais.
-* **Oferecer suas habilidades**, ganhando experiência prática e construindo um portfólio.
+* **Solicitar serviços** (ex: formatação ABNT, aulas de reforço, design de logo).
+* **Oferecer suas habilidades**, ganhando experiência prática e construindo um portfólio real.
 * **Promover o networking** e a troca de conhecimentos de forma simples e segura.
 
-O foco principal do projeto é atuar como uma ferramenta para a **coleta e análise de dados** sobre as dinâmicas de colaboração na comunidade, alinhado aos **Objetivos de Desenvolvimento Sustentável (ODS)** 4 (Educação de Qualidade) e 8 (Trabalho Decente e Crescimento Econômico).
+O foco do projeto vai além da funcionalidade: ele atua como uma ferramenta para a **coleta e análise de dados** sobre as dinâmicas de colaboração na comunidade acadêmica.
+
+---
 
 ## ✨ Features
 
--   **👤 Conta de Usuário Unificada:** Um único perfil para atuar como cliente ou prestador de serviço.
--   **🎨 Perfil e Portfólio:** Área personalizável com descrição, habilidades e galeria de trabalhos anteriores.
--   **🔐 Segurança:** Senhas armazenadas com criptografia (Hashing com Bcrypt) para garantir a segurança dos dados.
--   **📢 Cadastro de Serviços:** Ferramenta para prestadores criarem e gerenciarem anúncios.
--   **💬 Chat Integrado:** Canal de comunicação direta entre os usuários.
--   **⭐ Sistema de Avaliação Mútua:** Clientes e prestadores podem deixar avaliações públicas após a conclusão de um trabalho.
--   **📊 Dashboard Administrativo:** Painel para administradores acompanharem as métricas de uso da plataforma.
+- **👤 Conta Unificada:** Um único perfil permite atuar como Cliente e Prestador simultaneamente.
+- **🎨 Portfólio Visual:** Galeria de imagens para exibir seus trabalhos.
+- **🤝 Sistema de Propostas:** Fluxo de negociação completo (Solicitação -> Aceite/Recusa -> Conclusão), permitindo negociação de valor.
+- **💬 Chat Entre Usuários:** Os usuários podem conversar e negociar em tempo real por meio de um chat baseado em WebSockets.
+- **🔐 Segurança Avançada:**
+    - Autenticação via Flask-Login.
+    - Proteção de senhas com **Bcrypt**.
+    - Controle de acesso baseado em papéis (RBAC) para áreas administrativas.
+- **📢 Gestão de Serviços:** Criação de anúncios com tags, categorias, imagens de capa e precificação flexível (Fixo, Faixa de Preço ou Voluntário).
+- **⭐ Reputação:** Sistema de avaliação com cálculo automático de nota média.
+- **☁️ Infraestrutura Moderna:** Uploads seguros com limpeza automática e persistência em volumes Docker.
 
-## 🚀 Tecnologias Utilizadas
+---
 
-| Tecnologia | Finalidade |
-| :--- | :--- |
-| **Python (Flask)** | Backend e lógica da aplicação|
-| **PostgreSQL** | Banco de dados relacional |
-| **SQLAlchemy** | ORM para interação com o banco de dados |
-| **HTML, CSS, JS** | Frontend e interface do usuário |
-| **Jinja2** | Renderização de templates no servidor |
-| **Figma** | Design e prototipagem das telas |
-| **Git/GitHub** | Controle de versão |
-| **Power BI / Excel** | Análise de dados e visualização no Dashboard |
+## 🏛️ Arquitetura e Tecnologias
 
-## 🏛️ Arquitetura
+A aplicação foi desenvolvida seguindo uma **Arquitetura de Quatro Camadas** para garantir desacoplamento e testabilidade.
 
-A aplicação adota o padrão de arquitetura **MVC (Model-View-Controller)** para garantir um código organizado, manutenível e escalável.
+| Camada | Tecnologia | Responsabilidade |
+| :--- | :--- | :--- |
+| **View** | HTML, CSS, Jinja2 | Interface do usuário e renderização no servidor (SSR). |
+| **Controller** | Flask (Blueprints) | Roteamento, validação de entrada e orquestração HTTP. |
+| **Service** | Python | Lógica de negócio pura, regras de validação e processamento de dados. |
+| **Model** | SQLAlchemy (ORM) | Definição de esquemas e interação com o banco de dados. |
 
--   **Model:** Camada de dados, gerenciada pelo SQLAlchemy, que mapeia as tabelas do PostgreSQL para objetos Python.
--   **View:** Camada de apresentação, composta por templates HTML renderizados pelo Jinja2.
--   **Controller:** O Flask gerencia as requisições HTTP, orquestrando a lógica e a interação entre o Model e a View.
+![Diagrama Camadas](./docs/camadas.jpg)
 
-A estrutura de pastas do projeto reflete essa separação:
+### Infraestrutura (DevOps)
 
-UNITASKER/
+O projeto é totalmente containerizado para garantir paridade entre ambientes de desenvolvimento e produção.
 
-├── controllers/      # Lógica e rotas (Controller)
+* **Docker Compose:** Orquestra os serviços.
+* **Gunicorn:** Servidor de aplicação WSGI para produção.
+* **Caddy:** Servidor web que atua como Proxy Reverso e gerencia automaticamente certificados **HTTPS/SSL**.
+* **PostgreSQL:** Banco de dados relacional robusto com persistência de dados via volumes.
 
-├── models/           # Definição dos dados (Model)
-
-├── views/            # Templates HTML (View)
-
-├── static/           # Arquivos CSS, JS e imagens
-
-├── .env              # Variáveis de ambiente (credenciais)
-
-├── app.py            # Ponto de entrada da aplicação
-
-├── config.py         # Configurações
-
-└── requirements.txt  # Dependências do projeto
+---
 
 ## 📊 Estrutura de Dados
 
-A modelagem dos dados foi definida em um Diagrama de Entidade-Relacionamento (DER), com as entidades centrais **Usuario**, **Serviço** e **Avaliação**.
+A modelagem de dados foi planejada para garantir **integridade**, **escalabilidade** e **alta performance**:
 
-![Diagrama de Entidade-Relacionamento](static/Diagrama%20Estrutura%20de%20dados.png)
+- **Soft Delete:** Usuários e serviços não são removidos fisicamente, preservando histórico e permitindo auditoria.
+- **Polimorfismo de Tags:** A entidade `Tag` é reutilizada para classificar tanto serviços quanto habilidades dos usuários, reduzindo redundância.
+- **Normalização:** Entidades como `Usuário`, `Serviço`, `Solicitação` e `Avaliação` possuem responsabilidades bem definidas, evitando inconsistências e facilitando manutenção.
 
-## 🎨 Telas e Protótipos
+![Diagrama ER](./docs/banco-de-dados.jpg)
 
-As telas essenciais da plataforma foram prototipadas no Figma, estabelecendo a identidade visual e a experiência do usuário.
+---
 
-![Protótipo das Telas de Registro e Login](static/Registro%20e%20Login%20-%20Prototipo.png)
-![Protótipo da Tela Inicial](static/Tela%20inicial%20-%20Prototipo.png)
-![Área do usuário](static/Área%20do%20usuário%20-%20Prototipo.png)
+## 🏁 Instalação e Execução (Local)
 
-## 🏁 Começando
-
-Siga estas instruções para configurar o ambiente de desenvolvimento localmente.
+Siga estas instruções para rodar o projeto na sua máquina.
 
 ### Pré-requisitos
 
--   Python 3.9+
--   pip
--   Git
--   PostgreSQL
+* Docker e Docker Compose instalados.
 
-### Instalação
+### Passo a Passo
 
-1.  **Clone o repositório:**
-    ```sh
-    git clone [https://github.com/seu-usuario/unitasker.git](https://github.com/seu-usuario/unitasker.git)
+1. **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/JoaoFazolim/UniTasker.git](https://github.com/JoaoFazolim/UniTasker.git)
     cd unitasker
     ```
 
-2.  **Crie e ative um ambiente virtual:**
-    ```sh
-    python -m venv venv
-    # Windows
-    .\venv\Scripts\activate
-    # macOS/Linux
-    source venv/bin/activate
+2. **Configure as variáveis de ambiente:**
+    Crie um arquivo `.env` na raiz baseado no exemplo:
+    ```env
+    DB_USER=postgres
+    DB_PASSWORD=sua_senha
+    DB_NAME=unitasker
+    SECRET_KEY=chave_super_secreta
     ```
 
-3.  **Instale as dependências:**
-    ```sh
-    pip install -r requirements.txt
+3. **Suba os containers:**
+    ```bash
+    docker-compose up --build
     ```
+    *O banco de dados será populado com alguns exemplos automaticamente pelo script `seed.py` na primeira execução.*
 
-4.  **Configure as variáveis de ambiente:**
-    -   Renomeie o arquivo `.env.example` para `.env`.
-    -   Preencha as variáveis com suas credenciais do banco de dados e outras chaves.
+4. **Acesse:**
+    Abra o navegador em `http://localhost:8080` (ou a porta configurada no Caddy).
 
-5.  **Inicialize o banco de dados:**
-    *(Adicione aqui o comando para criar as tabelas, ex: `flask db init` se estiver usando Flask-Migrate)*
+---
 
-### Rodando a Aplicação
+## 👥 Equipe
 
-Para iniciar o servidor de desenvolvimento, execute:
-```sh
-flask run
+* **Amanda Pires de Oliveira** - *Frontend e Prototipagem*
+* **Ana Clara Inácio** - *Análise de Dados e Frontend*
+* **João Fernando Fazolim Calixto** - *Backend, Arquitetura e DevOps*
+

@@ -1,133 +1,119 @@
-from models import *
-from sqlalchemy import or_
-
-def enviarMensagem(dados, usuario_remetente):
-
-    destinatario_id = dados.get('destinatario_id')
-    conteudo = dados.get('conteudo')
-
-    #Validação básica
-    if not destinatario_id or not conteudo:
-        return {'status': 'FORM_INVALIDO', 'mensagem': 'Destinatário e conteúdo são obrigatórios.'}
-
-    try:
-        #Verifica se o destinatário existe
-        destinatario = Usuario.query.get(destinatario_id)
-        if not destinatario:
-            return {'status': 'NAO_ENCONTRADO', 'mensagem': 'Usuário destinatário não encontrado.'}
-
-        #Verifica se o remetente é o mesmo do destinatário
-        if usuario_remetente.id == int(destinatario_id):
-            return {'status': 'CONFLITO', 'mensagem': 'Você não pode enviar mensagem para si mesmo, arrume um amigo'}
-
-        #Verifica se a conversa entre os dois usuários ja existe
-        conversa = Conversa.query.filter(
-            or_(
-                (Conversa.usuario1_id == usuario_remetente.id) & (Conversa.usuario2_id == destinatario_id),
-                (Conversa.usuario1_id == destinatario_id) & (Conversa.usuario2_id == usuario_remetente.id)
-            )
-        ).first()
-
-        #Se não existir, cria a conversa
-        if not conversa:
-            conversa = Conversa(
-                usuario1_id=usuario_remetente.id,
-                usuario2_id=destinatario_id
-            )
-            db.session.add(conversa)
-            db.session.commit() 
-
-        #Cria a mensagem
-        nova_mensagem = Mensagem(
-            conteudo=conteudo,
-            conversa_id=conversa.id,
-            remetente_id=usuario_remetente.id
-        )
-
-        db.session.add(nova_mensagem)
-        db.session.commit()
-
-        return {
-            'status': 'SUCESSO',
-            'mensagem': 'Mensagem enviada!',
-            'data': {
-                'id': nova_mensagem.id,
-                'conteudo': nova_mensagem.conteudo,
-                'data_envio': nova_mensagem.data_envio.isoformat(),
-                'conversa_id': conversa.id
-            }
-        }
-
-    except Exception as e:
-        db.session.rollback()
-        return {'status': 'ERRO_GENERICO', 'mensagem': f'Erro ao enviar mensagem: {str(e)}'}
+from flask import Blueprint, jsonify, request
+from flask_socketio import join_room, emit, leave_room
+from extensions import socketio 
+from services import *
+from models import Conversa 
+from flask_login import current_user, login_required 
+from utils import handleResponse
 
 
-def listarConversas(usuario_logado):
+chat_bp = Blueprint('chat', __name__, url_prefix='/chat')
+
+
+
+@chat_bp.route('/conversas', methods=['GET'])
+@login_required 
+def get_conversas():
+
+    usuario = current_user 
     
-    try:
-        #Busca conversas que o usuário participa
-        conversas = Conversa.query.filter(
-            or_(
-                Conversa.usuario1_id == usuario_logado.id,
-                Conversa.usuario2_id == usuario_logado.id
-            )
-        ).all()
+    resultado = listarConversas(usuario)
+    
+    if resultado['status'] == 'SUCESSO':
+        return jsonify(resultado['data']), 200
+    else:
+        return jsonify(resultado), 500 
 
-        lista_conversas = []
-        for conv in conversas:
-            #Pega o outro usuário da conversa
-            outro_usuario = conv.usuario2 if conv.usuario1_id == usuario_logado.id else conv.usuario1
-            
-            #Ultima mensagem para preview
-            ultima_msg = Mensagem.query.filter_by(conversa_id=conv.id).order_by(Mensagem.data_envio.desc()).first()
+@chat_bp.route('/conversas/<int:conversa_id>/mensagens', methods=['GET'])
+@login_required
+def get_mensagens(conversa_id):
 
-            lista_conversas.append({
-                'id': conv.id,
-                'usuario_com_quem_falo': {
-                    'id': outro_usuario.id,
-                    'nome': outro_usuario.nome,
-                    'imagem': outro_usuario.imagem
-                },
-                'ultima_mensagem': ultima_msg.conteudo if ultima_msg else "Sem mensagens",
-                'data_ultima_mensagem': ultima_msg.data_envio.isoformat() if ultima_msg else None
-            })
-
-        #Ordena pela mais recente as conversas
-        lista_conversas.sort(key=lambda x: x['data_ultima_mensagem'] or '', reverse=True)
-
-        return {'status': 'SUCESSO', 'data': lista_conversas}
-
-    except Exception as e:
-        return {'status': 'ERRO_GENERICO', 'mensagem': str(e)}
+    usuario = current_user 
+    
+    resultado = obterMensagens(conversa_id, usuario)
+    
+    if resultado['status'] == 'SUCESSO':
+        return jsonify(resultado['data']), 200
+    elif resultado['status'] in ['NAO_AUTORIZADO', 'NAO_ENCONTRADO']:
+        return jsonify(resultado), 403 
+    else:
+        return jsonify(resultado), 500
 
 
-def obterMensagens(id_conversa, usuario_logado):
 
-    try:
-        conversa = Conversa.query.get(id_conversa)
+@socketio.on('join')
+def on_join(data):
+    #Verifica a autenticação manualmente
+    if not current_user.is_authenticated:
+        emit('error', {'mensagem': 'Autenticação SocketIO falhou (Usuário não logado).'}, room=request.sid)
+        return
         
-        if not conversa:
-            return {'status': 'NAO_ENCONTRADO', 'mensagem': 'Conversa não encontrada.'}
+    usuario = current_user 
+    conversa_id = data.get('conversa_id')
+    room = str(conversa_id) 
 
-        #Verifica se o usuário faz parte da conversa
-        if usuario_logado.id not in [conversa.usuario1_id, conversa.usuario2_id]:
-            return {'status': 'NAO_AUTORIZADO', 'mensagem': 'Você não tem permissão para ver essa conversa.'}
+    conversa = Conversa.query.get(conversa_id)
+    if not conversa or usuario.id not in [conversa.usuario1_id, conversa.usuario2_id]:
+        emit('error', {'mensagem': 'Sem permissão para entrar na sala.'}, room=request.sid)
+        return
+        
+    join_room(room)
+    emit('status', {'msg': f'Entrou na sala {conversa_id}'}, room=request.sid)
 
-        #Busca todas as mensagens ordenadas por data
-        mensagens = Mensagem.query.filter_by(conversa_id=id_conversa).order_by(Mensagem.data_envio.asc()).all()
 
-        historico = []
-        for msg in mensagens:
-            historico.append({
-                'id': msg.id,
-                'conteudo': msg.conteudo,
-                'data_envio': msg.data_envio.isoformat(),
-                'remetente_id': msg.remetente_id,
-                'sou_remetente': msg.remetente_id == usuario_logado.id 
-            })
+@socketio.on('send_message')
+def handle_send_message(data):
+    #Verifica a autenticação manualmente
+    if not current_user.is_authenticated:
+        emit('error', {'mensagem': 'Autenticação SocketIO falhou (Usuário não logado).'}, room=request.sid)
+        return
+        
+    usuario_remetente = current_user 
+    conversa_id = data.get('conversa_id')
+    conteudo = data.get('conteudo')
 
-        return {'status': 'SUCESSO', 'data': historico}
+    #Encontra a conversa e determina o destinatário
+    conversa = Conversa.query.get(conversa_id)
+    if not conversa:
+        emit('error', {'mensagem': 'Conversa não encontrada. Impossível enviar.'}, room=request.sid)
+        return
 
-    except Exception as e:
-        return {'status': 'ERRO_GENERICO', 'mensagem': str(e)}
+    destinatario_id = conversa.usuario2_id if conversa.usuario1_id == usuario_remetente.id else conversa.usuario1_id
+    
+    dados_para_service = {
+        'destinatario_id': destinatario_id,
+        'conteudo': conteudo
+    }
+    
+    #Salva no DB através da sua service
+    resultado = enviarMensagem(dados_para_service, usuario_remetente)
+
+    if resultado['status'] == 'SUCESSO' or resultado['status'] == 'CRIADO':
+        room = str(conversa_id)
+        
+        #Prepara o payload para o frontend
+        payload = {
+            'id': resultado['data']['id'],
+            'conteudo': resultado['data']['conteudo'],
+            'data_envio': resultado['data']['data_envio'], 
+            'conversa_id': conversa_id,
+            'remetente_id': usuario_remetente.id,
+            'remetente_nome': usuario_remetente.nome if hasattr(usuario_remetente, 'nome') else 'Eu' 
+        }
+        
+        #Emite o evento para todos na sala (tempo real)
+        emit('receive_message', payload, room=room) 
+    else:
+        emit('error', resultado, room=request.sid)
+
+
+
+@chat_bp.route('/iniciar-conversa', methods=['POST'])
+@login_required
+def iniciar_conversa():
+    usuario_remetente = current_user 
+    dados = request.json
+
+    resultado = enviarMensagem(dados, usuario_remetente)
+
+    return handleResponse(resultado, nomeTemplate='chat/placeholder')

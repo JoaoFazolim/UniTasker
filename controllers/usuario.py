@@ -111,37 +111,27 @@ def logout():
 @login_required
 def editar_perfil():
     
-    #Se for post chama o service
+ 
     if request.method == 'POST':
-        #Recebemos dados de FORM (form-data) que contém campos de texto e arquivos
+        #Coleta dados de texto (inclui ids para remover e capa)
         dados_form = request.form.to_dict()
+
+        print(dados_form)
         
-        #Recebe o arquivo da foto
-        if 'foto_perfil' in request.files:
-            arquivo_foto = request.files['foto_perfil']
-            if arquivo_foto and arquivo_foto.filename != '':
-                #Chama o Service de Upload
-                resposta_foto = atualizarImagemPerfil(current_user.id, arquivo_foto)
-                
-                #Se o upload falhar, envia a mensagem flash
-                if resposta_foto['status'] != 'SUCESSO':
-                    flash(resposta_foto.get('mensagem'), 'erro')
-                
+        #Coleta arquivos separadamente
+        arquivo_perfil = request.files.get('foto_perfil')
+        lista_portfolio = request.files.getlist('foto_portfolio')
         
-        resposta_texto = atualizarPerfil(current_user.id, dados_form)
+        #Chama o Service que processa tudo (Texto, Avatar e Portfólio)
+        resposta = atualizarPerfil(current_user.id, dados_form, arquivo_perfil, lista_portfolio)
         
-        #Faz redirect caso de certo a edição para o perfil
-        if resposta_texto['status'] == 'SUCESSO':
+        if resposta['status'] == 'SUCESSO':
             flash('Perfil atualizado com sucesso!', 'sucesso')
             return redirect(url_for('usuario.perfil_publico', username=current_user.username))
         else:
-            flash(resposta_texto.get('mensagem'), 'erro')
-            #Se der erro retorna para a edição
+            flash(resposta.get('mensagem'), 'erro')
+            #Se der erro, recarrega a página de edição
             return redirect(url_for('usuario.editar_perfil')) 
 
-
-    #Busca os dados do usuário logado para preencher o formulário
     dados_usuario = current_user.to_dict()
-    
-    #Renderiza o template com a flag editando=True
     return render_template('perfil.html', dados=dados_usuario, modo="editar_perfil")

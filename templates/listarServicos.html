@@ -4,159 +4,247 @@
 
 {% block css %}
 <style>
+    /* Reset de garantia */
+    * { box-sizing: border-box; }
 
-    .search-hero {
+    /* --- HERO --- */
+    .hero-section {
         background-color: #0a2439;
-        color: white;
-        padding: 40px 20px;
+        padding: 60px 20px;
         text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 10; 
+    }
+
+    .hero-title {
+        color: #fff;
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 700;
+        font-size: 2rem;
         margin-bottom: 30px;
+        display: block;
+    }
+
+    /* --- BOX DE BUSCA (ESTRUTURA) --- */
+    .busca-container {
+        max-width: 600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    /* O estilo visual fica nessa DIV, não no FORM */
+    .busca-visual {
+        display: flex;
+        align-items: stretch; 
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 5px; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        border: 2px solid white;
+        min-height: 60px;
+    }
+
+    .busca-input {
+        flex: 1;
+        border: none;
+        padding: 0 20px;
+        font-size: 1.1rem;
+        outline: none;
+        color: #333;
+        background: transparent;
+        height: auto; 
+    }
+
+    .busca-btn {
+        background-color: #c3c100;
+        color: #0a2439;
+        font-weight: 800;
+        border: none;
+        border-radius: 6px; 
+        padding: 0 30px;
+        cursor: pointer;
+        font-size: 1rem;
+        text-transform: uppercase;
+        transition: background 0.2s;
+    }
+
+    .busca-btn:hover {
+        background-color: #e6e400;
+    }
+
+    /* --- GRID --- */
+    .main-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 40px;
+        width: 100%;
+    }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 30px;
+        padding-bottom: 60px;
+    }
+
+    /* Card Link */
+    .card-anchor {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+    }
+
+    /* Card Visual */
+    .service-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(10, 36, 57, 0.15);
+        border-color: #c3c100;
+    }
+
+    .img-wrapper {
+        height: 180px;
+        background-color: #f1f3f5;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .img-wrapper img {
+        width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;
+    }
+    .service-card:hover .img-wrapper img { transform: scale(1.05); }
+
+    .img-placeholder {
+        width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+        color: #adb5bd; background: #f8f9fa; font-weight: 600;
+    }
+
+    .card-content {
+        padding: 20px; flex: 1; display: flex; flex-direction: column;
+    }
+
+    .card-cat {
+        font-size: 0.7em; text-transform: uppercase; color: #6c757d; font-weight: 700; margin-bottom: 8px;
+    }
+
+    .card-title {
+        margin: 0 0 15px 0; font-size: 1.15em; color: #0a2439; font-weight: 700; line-height: 1.4;
+    }
+
+    .tags-box {
+        display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+
+    .tag-item {
+        font-size: 0.75em; background: #f8f9fa; border: 1px solid #e9ecef; padding: 4px 10px; border-radius: 20px; color: #666;
+    }
+
+    .card-footer {
+        display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 15px; border-top: 1px solid #f1f3f5;
+    }
+
+    .mini-avatar {
+        width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background: #0a2439; color: #c3c100;
+        display: flex; align-items: center; justify-content: center; font-size: 0.8em; font-weight: bold; object-fit: cover;
+    }
+
+    .price-tag {
+        margin-left: auto; font-weight: 800; color: #0a2439; font-size: 1.1em; white-space: nowrap;
     }
     
-    .grid-servicos {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 25px;
+    .empty-msg {
+        grid-column: 1/-1; text-align: center; padding: 60px; background: #fff; border: 1px dashed #ddd; border-radius: 8px;
     }
 
-    .card-servico {
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        transition: transform 0.2s;
-        display: flex;
-        flex-direction: column;
-    }
-    .card-servico:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-    }
-
-    .servico-img {
-        height: 180px;
-        background-color: #eee;
-        position: relative;
-    }
-    .servico-img img {
-        width: 100%; height: 100%; object-fit: cover;
-    }
-    .placeholder-img {
-        width: 100%; height: 100%;
-        display: flex; align-items: center; justify-content: center;
-        color: #aaa; font-size: 0.9em; background: #f4f4f4;
-    }
-
-    .servico-body {
-        padding: 15px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .servico-cat {
-        font-size: 0.75em;
-        text-transform: uppercase;
-        color: #666;
-        letter-spacing: 0.5px;
-        margin-bottom: 5px;
-    }
-
-    .servico-titulo {
-        margin: 0 0 10px 0;
-        font-size: 1.2em;
-        color: #0a2439;
-    }
-
-    .servico-user {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: auto; 
-        padding-top: 15px;
-        border-top: 1px solid #eee;
-    }
-    .user-avatar {
-        width: 30px; height: 30px;
-        border-radius: 50%;
-        background: #ddd;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 0.8em;
-        color: #555;
-    }
-
-    .servico-preco {
-        margin-left: auto;
-        font-weight: bold;
-        color: #c3c100;
+    /* Mobile */
+    @media (max-width: 600px) {
+        .busca-visual { flex-direction: column; padding: 10px; height: auto; }
+        .busca-input { width: 100%; margin-bottom: 10px; padding: 10px; text-align: center; border-bottom: 1px solid #eee; }
+        .busca-btn { width: 100%; padding: 12px; }
+        .hero-section { padding: 40px 20px; }
+        .main-content { padding: 0 20px; }
+        .cards-grid { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 
-
-<div class="search-hero">
-    <h2>Buscar por nome</h2>
-    <div style="max-width: 500px; margin: 20px auto; position: relative;">
-        <form action="{{ url_for('servico.listar') }}" method="GET" style="display: flex;">
-            <input type="text" name="busca" placeholder="O que você procura?" class="search-input" style="border-radius: 4px 0 0 4px; border: none;">
-            <button type="submit" class="btn" style="background: #c3c100; color: #0a2439; border-radius: 0 4px 4px 0; font-weight: bold;">Buscar</button>
+<div class="hero-section">
+    <h2 class="hero-title">Encontre o serviço ideal</h2>
+    
+    <div class="busca-container">
+        <form action="{{ url_for('servico.listar') }}" method="GET" style="display: block; width: 100%;">
+            
+            <div class="busca-visual">
+                <input type="text" name="busca" placeholder="O que você precisa hoje?" class="busca-input">
+                <button type="submit" class="busca-btn">BUSCAR</button>
+            </div>
+            
         </form>
     </div>
 </div>
 
-<main class="container">
-    <div class="grid-servicos">
+<main class="main-content">
+    <div class="cards-grid">
         {% for servico in dados %}
-        <a href="{{ url_for('servico.detalhes', id_servico=servico.id) }}" style="text-decoration: none; color: inherit;">
-            <div class="card-servico">
-
-                <div class="servico-img">
-                    {% if servico.imagem_capa %}
-                        <img src="{{ url_for('static', filename='images/uploads/' + servico.imagem_capa.caminho) }}" alt="Capa">
-                    {% else %}
-                        <div class="placeholder-img">Sem imagem</div>
-                    {% endif %}
-                </div>
-
-
-                <div class="servico-body">
-                    <span class="servico-cat">{{ servico.categoria }}</span>
-                    <h3 class="servico-titulo">{{ servico.titulo }}</h3>
-                    
-      
-                    <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px;">
-                        {% for tag in servico.tags[:3] %}
-                            <span style="font-size: 0.7em; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; color: #555;">{{ tag }}</span>
-                        {% endfor %}
+            <a href="{{ url_for('servico.detalhes', id_servico=servico.id) }}" class="card-anchor">
+                <div class="service-card">
+                    <div class="img-wrapper">
+                        {% if servico.imagem_capa %}
+                            <img src="{{ url_for('static', filename='images/uploads/' + servico.imagem_capa.caminho) }}" alt="Capa">
+                        {% else %}
+                            <div class="img-placeholder">Sem imagem</div>
+                        {% endif %}
                     </div>
 
-              
-                    <div class="servico-user">
-                        {% if servico.usuario.imagem %}
-                            <img src="{{ url_for('static', filename='images/' + servico.usuario.imagem) }}" class="user-avatar">
-                        {% else %}
-                            <div class="user-avatar">{{ servico.usuario.nome[:1] }}</div>
-                        {% endif %}
+                    <div class="card-content">
+                        <span class="card-cat">{{ servico.categoria }}</span>
+                        <h3 class="card-title">{{ servico.titulo }}</h3>
                         
-                        <span style="font-size: 0.9em;">{{ servico.usuario.nome.split()[0] }}</span>
-                        
-                        <div class="servico-preco">
-                            {% if servico.forma_pagamento == 'pago' %}
-                                R$ {{ "%.2f"|format(servico.valor_minimo) }}
+                        <div class="tags-box">
+                            {% for tag in servico.tags[:3] %}
+                                <span class="tag-item">#{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <div class="card-footer">
+                            {% if servico.usuario.imagem %}
+                                <img src="{{ url_for('static', filename='images/uploads/' + servico.usuario.imagem) }}" class="mini-avatar">
                             {% else %}
-                                {{ servico.forma_pagamento | replace('_', ' ') | title }}
+                                <div class="mini-avatar">{{ servico.usuario.nome[:1].upper() }}</div>
                             {% endif %}
+                            
+                            <span style="font-size: 0.9em; color: #555;">{{ servico.usuario.nome.split()[0] }}</span>
+                            
+                            <div class="price-tag">
+                                {% if servico.forma_pagamento == 'pago' %}
+                                    R$ {{ "%.2f"|format(servico.valor_minimo) }}
+                                {% else %}
+                                    <span style="color: #28a745; font-size: 0.9em;">{{ servico.forma_pagamento | replace('_', ' ') | title }}</span>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
         {% else %}
-            <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
-                <h3>Nenhum serviço encontrado.</h3>
-                <p>Tente buscar por outro termo ou categoria.</p>
+            <div class="empty-msg">
+                <h3>Nenhum serviço encontrado 😕</h3>
+                <p>Tente buscar por outro termo ou navegue pelas categorias.</p>
             </div>
         {% endfor %}
     </div>

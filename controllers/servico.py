@@ -66,9 +66,44 @@ def editar(id_servico):
 
 @servico_bp.route('/servico/<int:id_servico>', methods=['GET'])
 def detalhes(id_servico):
-    resposta = obterServico(id_servico)
     
-    return handleResponse(resposta, 'detalhesServico')
+    res_servico = obterServico(id_servico)
+    
+    if res_servico['status'] != 'SUCESSO':
+        return handleResponse(res_servico, 'detalhesServico')
+    
+    servico_dados = res_servico['data']
+    
+    #Busca avaliações do servico
+    res_avaliacoes = listarAvaliacoesServico(id_servico)
+    lista_avaliacoes = res_avaliacoes['data'] if res_avaliacoes['status'] == 'SUCESSO' else []
+
+    #Verifica se o usuário pode avaliar
+    solicitacao_ativa = None
+    pode_avaliar = False
+    
+    if current_user.is_authenticated:
+        
+
+        solicitacao_ativa = verificarStatusSolicitacao(id_servico, current_user)
+ 
+
+        solicitacao_concluida = buscarSolicitacaoConcluida(id_servico, current_user)
+   
+
+        
+
+        if solicitacao_concluida:
+            
+            pode_avaliar = verificarPodeAvaliar(id_servico, current_user)
+         
+    
+
+    return render_template('detalhesServico.html', 
+                            dados=servico_dados, 
+                            lista_avaliacoes=lista_avaliacoes,
+                            pode_avaliar=pode_avaliar,
+                            solicitacao_ativa=solicitacao_ativa)
 
 @servico_bp.route('/servicos', methods=['GET'])
 def listar():

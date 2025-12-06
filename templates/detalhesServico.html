@@ -2,107 +2,315 @@
 
 {% block title %}{{ dados.titulo }} - UniTasker{% endblock %}
 
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/servico.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="container" style="margin-top: 30px; display: flex; gap: 30px; flex-wrap: wrap;">
+<div class="container service-container">
+    <input type="hidden" id="destinatario-perfil-id" value="{{ dados.usuario.id }}">
+    <input type="hidden" id="destinatario-perfil-nome" value="{{ dados.usuario.nome }}">
     
-   
+    <!-- COLUNA ESQUERDA: IMAGENS, DESCRIÇÃO E AVALIAÇÕES (65%) -->
     <div style="flex: 2; min-width: 300px;">
         
-   
-      {% include "components/carrossel.html" %}
-
- 
-        <div class="card">
-            <div class="card-body">
-                <div style="margin-bottom: 15px;">
-                    <span class="tag" style="background: #e3f2fd; color: #0d47a1; padding: 5px 10px; border-radius: 15px; font-size: 0.8em;">
-                        {{ dados.categoria }}
-                    </span>
-                </div>
-                
-                <h1 style="color: #0a2439; margin-bottom: 20px;">{{ dados.titulo }}</h1>
-                
-                <div id="descricao-renderizada" class="markdown-content" data-raw="{{ dados.descricaoMD }}"></div>
-
-                <div style="margin-top: 30px;">
-                    <h4>Tags:</h4>
-                    {% for tag in dados.tags %}
-                        <span style="background: #f0f0f0; padding: 5px 10px; border-radius: 5px; margin-right: 5px; font-size: 0.9em;">#{{ tag }}</span>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div style="flex: 1; min-width: 280px;">
-        
-       
-        <div class="card" style="position: sticky; top: 20px;">
-            <div class="card-body">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <p style="color: #666; font-size: 0.9em; margin: 0;">Valor Estimado</p>
-                    <h2 style="color: #c3c100; margin: 5px 0;">
-                        {% if dados.forma_pagamento == 'pago' %}
-                            R$ {{ "%.2f"|format(dados.valor_minimo) }}
-                            {% if dados.valor_maximo %} - {{ "%.2f"|format(dados.valor_maximo) }}{% endif %}
-                        {% else %}
-                            {{ dados.forma_pagamento | replace('_', ' ') | title }}
-                        {% endif %}
-                    </h2>
-                </div>
-
-                <hr style="border-top: 1px solid #eee; margin: 20px 0;">
-
-                <!-- PERFIL DO PRESTADOR -->
-                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                    <a href="{{ url_for('usuario.perfil_publico', username=dados.usuario.username) }}">
-                        {% if dados.usuario.imagem %}
-                            <img src="{{ url_for('static', filename='images/' + dados.usuario.imagem) }}" 
-                                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-                        {% else %}
-                            <div style="width: 50px; height: 50px; border-radius: 50%; background: #ccc;"></div>
-                        {% endif %}
-                    </a>
-                    <div>
-                        <p style="margin: 0; font-weight: bold;">{{ dados.usuario.nome }}</p>
-                        <a href="{{ url_for('usuario.perfil_publico', username=dados.usuario.username) }}" style="font-size: 0.8em; color: #007bff;">Ver perfil</a>
+        <div class="left-column">
+            
+            <!-- CARD PRINCIPAL: TÍTULO E DESCRIÇÃO -->
+            <div class="card-principal" >
+                <!-- CARROSSEL DE IMAGENS -->
+            {% with lista_imagens=dados.imagens, id_unico='servico' %}
+                {% include "components/carrossel.html" %}
+            {% endwith %}
+                <div class="card-body" >
+                    
+                    <div class="category-container">
+                        <span class="category-badge">{{ dados.categoria }}</span>
+                    </div>
+                    
+                    <h1 class="service-title">{{ dados.titulo }}</h1>
+                    
+                    <!-- Descrição Markdown -->
+                    <div id="descricao-renderizada" class="markdown-content" data-raw="{{ dados.descricaoMD }}" style="color: #444; line-height: 1.6;"></div>
+    
+                    <hr style="border-top: 1px solid #eee; margin: 30px 0;">
+    
+                    <!-- Tags -->
+                    <div class="tag-container">
+                        <h4 style="color: #0a2439; margin-bottom: 10px;">Tags:</h4>
+                        {% for tag in dados.tags %}
+                            <span class="tag-pill">#{{ tag }}</span>
+                        {% endfor %}
                     </div>
                 </div>
+            </div>
+            
+            <div class="mobile-action-card">
+                <div class="price-display">
+                <p class="price-label">Valor Estimado</p>
+                <h2 class="price-value">
+                    {% if dados.forma_pagamento == 'pago' %}
+                        R$ {{ "%.2f"|format(dados.valor_minimo) }}
+                        {% if dados.valor_maximo %} - {{ "%.2f"|format(dados.valor_maximo) }}{% endif %}
+                    {% else %}
+                        {{ dados.forma_pagamento | replace('_', ' ') | title }}
+                    {% endif %}
+                </h2>
+            </div>
 
-             
+            <!-- 2. PRESTADOR -->
+            <div class="provider-box">
+                <a href="{{ url_for('usuario.perfil_publico', username=dados.usuario.username) }}">
+                    {% if dados.usuario.imagem and dados.usuario.imagem != 'default.png' %}
+                        <img src="{{ url_for('static', filename='images/uploads/' + dados.usuario.imagem) }}" 
+                             class="provider-avatar" alt="Avatar">
+                    {% else %}
+                        <div class="provider-initials">
+                            {{ dados.usuario.nome[:2].upper() }}
+                        </div>
+                    {% endif %}
+                </a>
+                <div class="provider-info">
+                    <p>{{ dados.usuario.nome }}</p>
+                    <a href="{{ url_for('usuario.perfil_publico', username=dados.usuario.username) }}">Ver perfil completo</a>
+                </div>
+                <button id="btn-conversa-perfil" class="btn btn-primary" style="margin-top:10px;">💬 Conversar</button>
+            </div>
+
+            <!-- 3. LÓGICA DE AÇÃO (Formulários) -->
+            <div style="padding: 0 20px 20px 20px;">
+                
+                <!-- DONO DO SERVIÇO -->
                 {% if current_user.is_authenticated and current_user.id == dados.usuario.id %}
-                    <a href="{{ url_for('servico.editar', id_servico=dados.id) }}" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">Editar Serviço</a>
+                    <a href="{{ url_for('servico.editar', id_servico=dados.id) }}" class="btn-block btn-primary-brand">
+                        ✏️ Editar Meu Serviço
+                    </a>
+                
+                <!-- JÁ POSSUI SOLICITAÇÃO ATIVA -->
+                {% elif solicitacao_ativa %}
+                    {% set sol = solicitacao_ativa %}
+                    
+                    <!-- Painel de Status Colorido -->
+                    <div class="status-panel {{ 'concluida' if sol.status == 'concluida' else '' }}" 
+                         style="border-color: {{ '#28a745' if sol.status == 'aceita' else '#ffc107' }}; background-color: {{ '#f0fff4' if sol.status == 'aceita' else '#fffde7' }};">
+                        
+                        <p style="font-weight: bold; margin-bottom: 5px; color: #333;">
+                            Status: <span style="text-transform: uppercase;">{{ sol.status }}</span>
+                        </p>
+                        <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">
+                            {{ 'Aguardando resposta do prestador.' if sol.status == 'pendente' else 'Trabalho em andamento.' }}
+                        </p>
+
+                        <!-- Ações de Gerenciamento -->
+                        {% if sol.status == 'pendente' %}
+                            <form action="{{ url_for('solicitacao.responder', id_solicitacao=sol.id, acao='cancelar') }}" method="POST">
+                                <button type="submit" class="btn-block btn-danger-brand" onclick="return confirm('Cancelar sua proposta pendente?');">
+                                    Cancelar Proposta
+                                </button>
+                            </form>
+                        {% elif sol.status == 'aceita' %}
+                            <form action="{{ url_for('solicitacao.responder', id_solicitacao=sol.id, acao='concluir') }}" method="POST">
+                                <button type="submit" class="btn-block btn-success-brand" onclick="return confirm('Confirmar conclusão do serviço?');">
+                                    ✅ Marcar como Concluído
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                
+                <!-- CLIENTE NOVO (FORMULÁRIO) -->
                 {% else %}
-                    <form action="#" method="POST"> 
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label style="font-size: 0.9em; font-weight: bold;">Sua Oferta (R$)</label>
-                            <input type="number" name="valor_oferta" class="form-control" style="width: 100%; padding: 8px;" placeholder="Quanto quer pagar?" required>
+                    <form action="{{ url_for('solicitacao.criar') }}" method="POST"> 
+                        <input type="hidden" name="servico_id" value="{{ dados.id }}">
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 0.9em; font-weight: bold; color: #555; display:block; margin-bottom: 5px;">Sua Oferta (R$)</label>
+                            <input type="number" name="valor_ofertado" class="offer-input" placeholder="Quanto quer pagar?" required>
                         </div>
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label style="font-size: 0.9em; font-weight: bold;">Mensagem / Detalhes</label>
-                            <textarea name="descricao" class="form-control" rows="3" style="width: 100%; padding: 8px;" placeholder="Descreva o que precisa..." required></textarea>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="font-size: 0.9em; font-weight: bold; color: #555; display:block; margin-bottom: 5px;">Mensagem ao Prestador</label>
+                            <textarea name="descricao_pedido" class="offer-input" rows="3" placeholder="Descreva sua necessidade..." required style="font-family: inherit;"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success" style="width: 100%;">Enviar Proposta</button>
+                        
+                        <button type="submit" class="btn-block btn-success-brand">
+                            Enviar Proposta
+                        </button>
                     </form>
                 {% endif %}
-
             </div>
+            </div>
+
+            <!-- ÁREA DE AVALIAÇÃO (Condicional) -->
+            {% if pode_avaliar %}
+                {% include "components/formAvaliacao.html" %}
+            {% endif %}
+    
+            <!-- LISTA DE AVALIAÇÕES -->
+            {% include "components/listaAvaliacoes.html" %}
+            
         </div>
 
+
     </div>
+
+
+
+
+        
+    
+        <div class="right-column">
+            
+       
+            <div class="price-display">
+                <p class="price-label">Valor Estimado</p>
+                <h2 class="price-value">
+                    {% if dados.forma_pagamento == 'pago' %}
+                        R$ {{ "%.2f"|format(dados.valor_minimo) }}
+                        {% if dados.valor_maximo %} - {{ "%.2f"|format(dados.valor_maximo) }}{% endif %}
+                    {% else %}
+                        {{ dados.forma_pagamento | replace('_', ' ') | title }}
+                    {% endif %}
+                </h2>
+            </div>
+
+        
+            <div class="provider-box">
+                <a href="{{ url_for('usuario.perfil_publico', username=dados.usuario.username) }}">
+                    {% if dados.usuario.imagem and dados.usuario.imagem != 'default.png' %}
+                        <img src="{{ url_for('static', filename='images/uploads/' + dados.usuario.imagem) }}" 
+                             class="provider-avatar" alt="Avatar">
+                    {% else %}
+                        <div class="provider-initials">
+                            {{ dados.usuario.nome[:2].upper() }}
+                        </div>
+                    {% endif %}
+                </a>
+                <div class="provider-info">
+                    <p>{{ dados.usuario.nome }}</p>
+                    <a href="{{ url_for('usuario.perfil_publico', username=dados.usuario.username) }}">Ver perfil completo</a>
+                </div>
+                <button id="btn-conversa-perfil" class="btn btn-primary" style="margin-top:10px;">💬 Conversar</button>
+            </div>
+
+         
+            <div style="padding: 0 20px 20px 20px;">
+                
+                <!-- DONO DO SERVIÇO -->
+                {% if current_user.is_authenticated and current_user.id == dados.usuario.id %}
+                    <a href="{{ url_for('servico.editar', id_servico=dados.id) }}" class="btn-block btn-primary-brand">
+                        ✏️ Editar Meu Serviço
+                    </a>
+                
+                <!-- JÁ POSSUI SOLICITAÇÃO ATIVA -->
+                {% elif solicitacao_ativa %}
+                    {% set sol = solicitacao_ativa %}
+                    
+                    <!-- Painel de Status Colorido -->
+                    <div class="status-panel {{ 'concluida' if sol.status == 'concluida' else '' }}" 
+                         style="border-color: {{ '#28a745' if sol.status == 'aceita' else '#ffc107' }}; background-color: {{ '#f0fff4' if sol.status == 'aceita' else '#fffde7' }};">
+                        
+                        <p style="font-weight: bold; margin-bottom: 5px; color: #333;">
+                            Status: <span style="text-transform: uppercase;">{{ sol.status }}</span>
+                        </p>
+                        <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">
+                            {{ 'Aguardando resposta do prestador.' if sol.status == 'pendente' else 'Trabalho em andamento.' }}
+                        </p>
+
+                        <!-- Ações de Gerenciamento -->
+                        {% if sol.status == 'pendente' %}
+                            <form action="{{ url_for('solicitacao.responder', id_solicitacao=sol.id, acao='cancelar') }}" method="POST">
+                                <button type="submit" class="btn-block btn-danger-brand" onclick="return confirm('Cancelar sua proposta pendente?');">
+                                    Cancelar Proposta
+                                </button>
+                            </form>
+                        {% elif sol.status == 'aceita' %}
+                            <form action="{{ url_for('solicitacao.responder', id_solicitacao=sol.id, acao='concluir') }}" method="POST">
+                                <button type="submit" class="btn-block btn-success-brand" onclick="return confirm('Confirmar conclusão do serviço?');">
+                                    ✅ Marcar como Concluído
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                
+                <!-- CLIENTE NOVO (FORMULÁRIO) -->
+                {% else %}
+                    <form action="{{ url_for('solicitacao.criar') }}" method="POST"> 
+                        <input type="hidden" name="servico_id" value="{{ dados.id }}">
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 0.9em; font-weight: bold; color: #555; display:block; margin-bottom: 5px;">Sua Oferta (R$)</label>
+                            <input type="number" name="valor_ofertado" class="offer-input" placeholder="Quanto quer pagar?" required>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="font-size: 0.9em; font-weight: bold; color: #555; display:block; margin-bottom: 5px;">Mensagem ao Prestador</label>
+                            <textarea name="descricao_pedido" class="offer-input" rows="3" placeholder="Descreva sua necessidade..." required style="font-family: inherit;"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-block btn-success-brand">
+                            Enviar Proposta
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+
+        </div>
+
+
 </div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+  
+document.addEventListener('DOMContentLoaded', function() {
+        
+     
         const bioElement = document.getElementById('descricao-renderizada');
         if (bioElement) {
             const rawMarkdown = bioElement.getAttribute('data-raw');
-            bioElement.innerHTML = DOMPurify.sanitize(marked.parse(rawMarkdown));
+            if (rawMarkdown && rawMarkdown.trim() !== '') {
+              
+                bioElement.innerHTML = DOMPurify.sanitize(marked.parse(rawMarkdown));
+            } else {
+                bioElement.innerHTML = '<p style="color:#999; font-style:italic;">Sem descrição detalhada.</p>';
+            }
         }
+   
+        const destinatarioPerfilId = document.getElementById('destinatario-perfil-id'); 
+        const destinatarioPerfilNome = document.getElementById('destinatario-perfil-nome'); 
+
+      
+        document.body.addEventListener('click', function(event) {
+            
+      
+            const btnConversaPerfil = event.target.closest('#btn-conversa-perfil');
+            
+            if (btnConversaPerfil) {
+                event.preventDefault(); // Impede o comportamento padrão do botão
+                
+                const id = destinatarioPerfilId ? destinatarioPerfilId.value : null;
+                const nome = destinatarioPerfilNome ? destinatarioPerfilNome.value : null;
+                
+                if (!id) {
+                    alert("Erro: ID do destinatário não injetado pelo Jinja2.");
+                    return;
+                }
+                
+                // 3. Chama a função global (definida em script-chat.js)
+                // Assumindo que abrirNovoChatModal é globalmente acessível.
+                if (typeof abrirNovoChatModal === 'function') {
+                     abrirNovoChatModal(id, nome);
+                     console.log("Chat Aberto via Botão de Perfil!");
+                } else {
+                     console.error("ERRO FATAL: Função abrirNovoChatModal não encontrada. Verifique se script-chat.js foi carregado PRIMEIRO.");
+                }
+            }
+        }); 
     });
+
 </script>
+
 {% endblock %}

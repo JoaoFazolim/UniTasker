@@ -6,11 +6,16 @@ from flask_login import UserMixin
 class UsuarioPortfolio(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     caminho = db.Column(db.String(150), nullable=False) 
+    is_cover = db.Column(db.Boolean, default=False, nullable=False)
     
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
 
     def to_dict(self):
-        return {'id': self.id, 'caminho': self.caminho}
+        return {
+            'id': self.id, 
+            'caminho': self.caminho, 
+            'is_cover': self.is_cover
+        }
 
 class Usuario(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,11 +24,11 @@ class Usuario(db.Model, UserMixin):
     nome = db.Column(db.String(30), nullable=False)
 
     descricaoMD = db.Column(db.Text, nullable=False,default='')
-    imagem = db.Column(db.String(100), nullable=True)
+    imagem = db.Column(db.String(100), nullable=True, default='user.jpg')
     notaGeral = db.Column(db.Float,nullable = False, default=0.0)
 
-    cargo = db.Column(db.String(50), nullable=True) 
-    localizacao = db.Column(db.String(30), nullable=True)
+    cargo = db.Column(db.String(50), nullable=True, default='') 
+    localizacao = db.Column(db.String(30), nullable=True, default='')
 
     hashSenha = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(20), nullable = False, default='user')
@@ -70,6 +75,19 @@ class Usuario(db.Model, UserMixin):
                     'imagem_capa': caminho_capa
                 })
 
+        #Puxam o backref da tabela de solicitações
+        #Lista de solicitações recebidas
+        lista_recebidas = []
+        
+        for sol in self.solicitacoes_recebidas:
+            if sol.status == 'pendente' or sol.status == 'aceita':
+                lista_recebidas.append(sol.to_dict())
+
+        #Lista de solicitações enviadas
+        lista_enviadas = []
+        for sol in self.minhas_solicitacoes:
+             lista_enviadas.append(sol.to_dict())
+
         return {
             'id': self.id,
             'username': self.username,
@@ -84,6 +102,8 @@ class Usuario(db.Model, UserMixin):
             'cargo': self.cargo,
             'localizacao': self.localizacao,
             'habilidades': [tag.nome for tag in self.habilidades],
-            'portfolio': [img.caminho for img in self.portfolio],
-            'servicos': lista_servicos
+            'portfolio': [img.to_dict() for img in self.portfolio],
+            'servicos': lista_servicos,
+            'solicitacoes_recebidas': lista_recebidas,
+            'solicitacoes_enviadas': lista_enviadas
         }

@@ -48,25 +48,9 @@
 
         
                 <div class="right-column">
-                    <div class="card">
-                      
-                    </div>
-
-                    <div class="card solicitaçoes">
-                        <div class="card-body">
-                            <h3 class="card-header">Você possui uma nova solicitação!</h3>
-                            <div class="friend-avatar">JD</div>
-                            <h4>Jane Doe</h4>
-                            <div class="friend-actions">
-                                <button class="btn btn-success">Aceitar</button>
-                                <button class="btn btn-danger">Recusar</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                  
-                    </div>
+                    {% if  current_user.is_authenticated and current_user.id == dados.id %}
+                    {% include "components/solicitacoes.html" %}
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -19,17 +19,17 @@ const searchWrapper = document.getElementById('search-wrapper');
 const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
 
+let idCat = 1
 
 categorias.forEach(categoria => {
     const link = document.createElement('a');
-    link.href = '#';
+    link.href = `/servicos?categoria=${idCat}`;
     link.textContent = categoria;
     link.onclick = (e) => {
-        e.preventDefault();
-        alert(`Você selecionou: ${categoria}`);
         dropdownMenu.classList.remove('show');
     };
     dropdownMenu.appendChild(link);
+    idCat ++
 });
 
 categoriasBtn.addEventListener('click', (e) => {

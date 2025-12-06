@@ -1,0 +1,198 @@
+<style>
+    /* --- Estilos das Abas (Mantidos) --- */
+    .tabs-container-right { display: flex; gap: 5px; padding: 0 10px; margin-bottom: 0; position: relative; top: 1px; z-index: 10; }
+    .tab-btn-right { flex: 1; padding: 10px 5px; background-color: #e0e0e0; color: #555; border: 1px solid #ddd; border-bottom: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: 600; font-size: 0.85em; transition: all 0.2s; text-align: center; }
+    .tab-btn-right:hover { background-color: #dcdcdc; }
+    .tab-btn-right.active { background-color: white; color: #0a2439; border-top: 3px solid #0a2439; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid white; padding-top: 8px; }
+    .tab-content-card-right { border-top-left-radius: 0; border-top-right-radius: 0; border: 1px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-radius: 0 0 8px 8px; }
+    .badge-count { background-color: #e74c3c; color: white; font-size: 0.7em; padding: 1px 5px; border-radius: 10px; vertical-align: middle; margin-left: 3px; }
+
+    /* --- ESTILO DO CARD (Original Restaurado + Status) --- */
+    .solicitacao-card {
+        background: #f9f9f9; 
+        border: 1px solid #eee; 
+        border-radius: 8px; 
+        padding: 12px;
+        /* Borda lateral padrão (cinza) */
+        border-left: 4px solid #ccc; 
+    }
+    
+    /* Cores Específicas por Status (Sobrescreve a borda cinza) */
+    .solicitacao-card.status-aceita { border-left-color: #28a745; }
+    .solicitacao-card.status-pendente { border-left-color: #ffc107; }
+    .solicitacao-card.status-recusada { border-left-color: #dc3545; }
+
+    /* Badges de Status */
+    .status-badge {
+        font-size: 0.65em; 
+        text-transform: uppercase; 
+        padding: 2px 6px; 
+        border-radius: 4px; 
+        font-weight: bold;
+    }
+    .status-badge.aceita { background: #d4edda; color: #155724; }
+    .status-badge.pendente { background: #fff3cd; color: #856404; }
+
+    /* Botões Pequenos Unificados */
+    .btn-action-sm { display: flex; align-items: center; justify-content: center; width: 100%; height: 30px; padding: 0 8px; margin: 0; font-size: 0.75em; font-weight: 600; text-decoration: none; border-radius: 4px; border: 1px solid transparent; cursor: pointer; font-family: inherit; box-sizing: border-box; line-height: normal; background-color: #eee; color: #555; transition: background 0.2s; }
+    .btn-action-sm:hover { background-color: #e0e0e0; color: #333; text-decoration: none; }
+    .form-action { flex: 1; margin: 0; padding: 0; }
+</style>
+
+<!-- MENU DE ABAS -->
+<div class="tabs-container-right">
+    <button type="button" onclick="ativarAbaDireita('recebidas')" id="btn-tab-right-recebidas" class="tab-btn-right active">
+        Recebidas 
+        {% if dados.solicitacoes_recebidas %}
+            <span class="badge-count">{{ dados.solicitacoes_recebidas|length }}</span>
+        {% endif %}
+    </button>
+    <button type="button" onclick="ativarAbaDireita('enviadas')" id="btn-tab-right-enviadas" class="tab-btn-right">
+        Enviadas
+    </button>
+</div>
+
+<!-- CONTEÚDO -->
+<div class="card tab-content-card-right">
+    <div class="card-body" style="padding: 15px;">
+        
+        <!-- ABA 1: RECEBIDAS -->
+        <div id="conteudo-right-recebidas" style="display: block;">
+            {% if dados.solicitacoes_recebidas %}
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    {% for sol in dados.solicitacoes_recebidas %}
+                    {% if sol.status in ['pendente', 'aceita'] %}
+                        <div class="solicitacao-card status-{{ sol.status }}">
+                            
+                            <!-- Header: Badge e Valor -->
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;">
+                                {% if sol.status == 'pendente' %}
+                                    <span class="status-badge pendente">Pendente</span>
+                                {% else %}
+                                    <span class="status-badge aceita">Em Andamento</span>
+                                {% endif %}
+                                <span style="color: #2e7d32; font-weight: bold; font-size: 0.9em;">R$ {{ "%.2f"|format(sol.valor_ofertado) }}</span>
+                            </div>
+
+                            <!-- Info do Cliente -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <div class="friend-avatar" style="width: 25px; height: 25px; font-size: 0.7em; background: #0a2439; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                                    {{ sol.cliente.nome[:1] }}
+                                </div>
+                                <div style="overflow: hidden;">
+                                    <p style="margin: 0; font-size: 0.85em; font-weight: 600; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ sol.cliente.nome }}</p>
+                                    <p style="margin: 0; font-size: 0.7em; color: #666;">{{ sol.servico.titulo[:20] }}...</p>
+                                </div>
+                            </div>
+
+                            <!-- Descrição -->
+                            <p style="font-size: 0.8em; color: #666; font-style: italic; margin-bottom: 10px; background: #fff; padding: 6px; border-radius: 4px;">
+                                "{{ sol.descricao_pedido }}"
+                            </p>
+
+                            <!-- Ações -->
+                            <div style="display: flex; gap: 5px;">
+                                <a href="{{ url_for('servico.detalhes', id_servico=sol.servico.id) }}" class="btn-action-sm" style="flex: 1;">Ver</a>
+
+                                {% if sol.status == 'pendente' %}
+                                    <form action="{{ url_for('solicitacao.responder', id_solicitacao=sol.id, acao='aceitar') }}" method="POST" class="form-action" style="flex: 1;" onsubmit="return confirm('Aceitar proposta?');">
+                                        <button type="submit" class="btn-action-sm" style="background-color: #d4edda; color: #155724; border-color: #c3e6cb;">Aceitar</button>
+                                    </form>
+                                    <form action="{{ url_for('solicitacao.responder', id_solicitacao=sol.id, acao='recusar') }}" method="POST" class="form-action" style="flex: 1;" onsubmit="return confirm('Recusar proposta?');">
+                                        <button type="submit" class="btn-action-sm" style="background-color: #f8d7da; color: #721c24; border-color: #f5c6cb;">Recusar</button>
+                                    </form>
+                                {% elif sol.status == 'aceita' %}
+                                    <form action="{{ url_for('solicitacao.responder', id_solicitacao=sol.id, acao='concluir') }}" method="POST" class="form-action" style="flex: 2;" onsubmit="return confirm('Marcar serviço como concluído?');">
+                                        <button type="submit" class="btn-action-sm" style="background-color: #0a2439; color: white; border-color: #0a2439;">Concluir Serviço</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="text-align: center; font-size: 0.85em; color: #999; padding: 20px 0;">Nenhuma solicitação ativa.</p>
+            {% endif %}
+        </div>
+
+        <!-- ABA 2: ENVIADAS (REPLICANDO O MESMO ESTILO VISUAL) -->
+        <div id="conteudo-right-enviadas" style="display: none;">
+            {% if dados.solicitacoes_enviadas %}
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    {% set ns = namespace(found=false) %}
+                    {% for sol in dados.solicitacoes_enviadas %}
+                        {% if sol.status in ['pendente', 'aceita'] %}
+                            {% set ns.found = true %}
+                            
+                            <!-- Reutilizando a mesma classe .solicitacao-card que já funciona -->
+                            <div class="solicitacao-card status-{{ sol.status }}">
+                                
+                                <!-- Header: Badge e Valor -->
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;">
+                                    {% if sol.status == 'aceita' %}
+                                        <span class="status-badge aceita">Em Andamento</span>
+                                    {% else %}
+                                        <span class="status-badge pendente">Pendente</span>
+                                    {% endif %}
+                                    <span style="color: #2e7d32; font-weight: bold; font-size: 0.9em;">R$ {{ "%.2f"|format(sol.valor_ofertado) }}</span>
+                                </div>
+
+                                <!-- Info do Prestador (Igual ao Cliente acima) -->
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <div class="friend-avatar" style="width: 25px; height: 25px; font-size: 0.7em; background: #0a2439; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                                        {{ sol.prestador[:1] }}
+                                    </div>
+                                    <div style="overflow: hidden;">
+                                        <p style="margin: 0; font-size: 0.85em; font-weight: 600; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ sol.prestador }}</p>
+                                        <p style="margin: 0; font-size: 0.7em; color: #666;">{{ sol.servico.titulo[:20] }}...</p>
+                                    </div>
+                                </div>
+
+                                <!-- Descrição -->
+                                <p style="font-size: 0.8em; color: #666; font-style: italic; margin-bottom: 10px; background: #fff; padding: 6px; border-radius: 4px;">
+                                    "{{ sol.descricao_pedido }}"
+                                </p>
+
+                                <!-- Ações -->
+                                <div style="display: flex; gap: 5px;">
+                                    <a href="{{ url_for('servico.detalhes', id_servico=sol.servico.id) }}" class="btn-action-sm" style="flex: 1;">Ver</a>
+
+                                    {% if sol.status == 'pendente' %}
+                                        <form action="{{ url_for('solicitacao.responder', id_solicitacao=sol.id, acao='cancelar') }}" method="POST" class="form-action" style="flex: 1;" onsubmit="return confirm('Cancelar proposta?');">
+                                            <button type="submit" class="btn-action-sm" style="background-color: #eee; color: #555;">Cancelar</button>
+                                        </form>
+                                    {% elif sol.status == 'aceita' %}
+                                        <form action="{{ url_for('solicitacao.responder', id_solicitacao=sol.id, acao='concluir') }}" method="POST" class="form-action" style="flex: 1;" onsubmit="return confirm('Confirmar conclusão?');">
+                                            <button type="submit" class="btn-action-sm" style="background-color: #0a2439; color: white; border-color: #0a2439;">Concluir</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if not ns.found %}
+                         <p style="text-align: center; font-size: 0.85em; color: #999; padding: 20px 0;">Nenhuma proposta ativa enviada.</p>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p style="text-align: center; font-size: 0.85em; color: #999; padding: 20px 0;">Nenhuma proposta enviada.</p>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function ativarAbaDireita(abaNome) {
+        document.getElementById('conteudo-right-recebidas').style.display = 'none';
+        document.getElementById('conteudo-right-enviadas').style.display = 'none';
+        document.getElementById('btn-tab-right-recebidas').classList.remove('active');
+        document.getElementById('btn-tab-right-enviadas').classList.remove('active');
+
+        document.getElementById('conteudo-right-' + abaNome).style.display = 'block';
+        document.getElementById('btn-tab-right-' + abaNome).classList.add('active');
+    }
+</script>
